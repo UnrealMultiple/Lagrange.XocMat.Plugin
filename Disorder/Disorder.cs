@@ -12,6 +12,14 @@ namespace Disorder;
 
 public class Disorder(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
 {
+    public override string Name => "Disorder";
+
+    public override string Description => "提供一些乱七八糟的功能";
+
+    public override string Author => "少司命";
+
+    public override Version Version => new(1, 0, 0, 0);
+
     private const string FellowUrl = "https://oiapi.net/API/CPUni/";
 
     private const string JrrpUrl = "https://oiapi.net/API/Yun/";

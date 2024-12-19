@@ -21,7 +21,7 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
 
     public override Version Version => new(1, 0, 0, 0);
 
-    private readonly PluginLoader loder = XocMatHostAppBuilder.instance.App.Services.GetRequiredService<PluginLoader>();
+    private PluginLoader Loader => XocMatHostAppBuilder.instance.App.Services.GetRequiredService<PluginLoader>();
 
     public override void Initialize()
     {
@@ -40,8 +40,8 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
         CommandManager.GroupCommandDelegate.Clear();
         CommandManager.ServerCommandDelegate.Clear();
 
-        loder.UnLoad();
-        loder.Load();
+        Loader.UnLoad();
+        Loader.Load();
         sw.Stop();
         await args.EventArgs.Reply($"插件热重载成功{AppDomain.CurrentDomain.GetAssemblies().Length}!\n用时:{sw.Elapsed.TotalSeconds:F5} 秒!", true);
     }
@@ -60,7 +60,7 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
             sb.AppendLine("|序号|插件名称|插件作者|插件说明|插件版本|");
             sb.AppendLine("|:--:|:--:|:--:|:--:|:--:|");
             int index = 1;
-            foreach (var plugin in loder.PluginContext.Plugins)
+            foreach (var plugin in Loader.PluginContext.Plugins)
             {
                 sb.AppendLine($"|{index}|{plugin.Name}|{plugin.Author}|{plugin.Description}|{plugin.Version}");
                 index++;
@@ -72,23 +72,23 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
         }
         else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "off")
         {
-            if (!int.TryParse(args.Parameters[1], out var index) || index < 1 || index > loder.PluginContext.Plugins.Count)
+            if (!int.TryParse(args.Parameters[1], out var index) || index < 1 || index > Loader.PluginContext.Plugins.Count)
             {
                 await args.EventArgs.Reply("请输入一个正确的序号!", true);
                 return;
             }
-            var instance = loder.PluginContext.Plugins[index - 1];
+            var instance = Loader.PluginContext.Plugins[index - 1];
             instance.Dispose();
             await args.EventArgs.Reply($"{instance.Name} 插件卸载成功!", true);
         }
         else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "on")
         {
-            if (!int.TryParse(args.Parameters[1], out var index) || index < 1 || index > loder.PluginContext.Plugins.Count)
+            if (!int.TryParse(args.Parameters[1], out var index) || index < 1 || index > Loader.PluginContext.Plugins.Count)
             {
                 await args.EventArgs.Reply("请输入一个正确的序号!", true);
                 return;
             }
-            var instance = loder.PluginContext.Plugins[index - 1];
+            var instance = Loader.PluginContext.Plugins[index - 1];
             instance.Initialize();
             await args.EventArgs.Reply($"{instance.Name} 插件加载成功!", true);
         }
@@ -99,9 +99,9 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
         else
         {
             await args.EventArgs.Reply("语法错误,正确语法:\n" +
-                $"${args.CommamdPrefix}{args.Name} list" +
-                $"${args.CommamdPrefix}{args.Name} off [序号]" +
-                $"${args.CommamdPrefix}{args.Name} on [序号]");
+                $"{args.CommamdPrefix}{args.Name} list" +
+                $"{args.CommamdPrefix}{args.Name} off [序号]" +
+                $"{args.CommamdPrefix}{args.Name} on [序号]");
         }
     }
 }
