@@ -10,7 +10,7 @@ using System.Text.Json.Nodes;
 
 namespace Disorder;
 
-public class Disorder : XocMatPlugin
+public class Disorder(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
 {
     private const string FellowUrl = "https://oiapi.net/API/CPUni/";
 
@@ -19,10 +19,6 @@ public class Disorder : XocMatPlugin
     private const string CosUrl = "https://imgapi.cn/cos2.php?return=jsonpro";
 
     private readonly static HttpClient client = new();
-
-    public Disorder(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
-    {
-    }
 
     public override void Initialize()
     {
@@ -42,7 +38,7 @@ public class Disorder : XocMatPlugin
         foreach (var img in arr)
         {
             var url = img?.ToString();
-            if(url == null) continue;
+            if (url == null) continue;
             chains.Add(MessageBuilder.Friend(args.EventArgs.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.HttpGetByte(url).Result).Build());
         }
         var build = MessageBuilder.Group(args.EventArgs.Chain.GroupUin!.Value);
@@ -84,7 +80,7 @@ public class Disorder : XocMatPlugin
 
         }
         else
-        { 
+        {
             var members = await args.Bot.FetchMembers(args.EventArgs.Chain.GroupUin!.Value);
             var targer = members.OrderBy(x => Guid.NewGuid()).First();
             targerid = targer.Uin;
@@ -92,9 +88,9 @@ public class Disorder : XocMatPlugin
             FollowConfig.Instance.SaveFollow(args.EventArgs.Chain.GroupMemberInfo!.Uin, targerid, targetName);
             FollowConfig.Save();
         }
-       
+
         var stream = await client.GetByteArrayAsync(FellowUrl + $"?first={(args.EventArgs.Chain.GroupMemberInfo!.MemberName.Length > 6 ? args.EventArgs.Chain.GroupMemberInfo!.MemberName[..6] : args.EventArgs.Chain.GroupMemberInfo!.MemberCard)}&second={targetName}");
-        List<MessageChain> chains =[
+        List<MessageChain> chains = [
                  MessageBuilder.Friend(args.EventArgs.Chain.GroupMemberInfo!.Uin).Text($"今日道侣").Build(),
                  MessageBuilder.Friend(args.EventArgs.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.HttpGetByte($"http://q.qlogo.cn/headimg_dl?dst_uin={targerid}&spec=640&img_type=png").Result).Text($"账号: {targerid}\n昵称: {targetName}").Build(),
                  MessageBuilder.Friend(args.EventArgs.Chain.GroupMemberInfo!.Uin).Image(stream).Build()

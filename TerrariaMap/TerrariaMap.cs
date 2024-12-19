@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace TerrariaMap;
 
-public class TerrariaMap: XocMatPlugin
+public class TerrariaMap(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
 {
     public override string Name => "TerrariaMap";
 
@@ -27,10 +27,6 @@ public class TerrariaMap: XocMatPlugin
     public override Version Version => new(1, 0, 0, 0);
 
     public string SavePath = Path.Combine(XocMatAPI.SAVE_PATH, "TerrariaMap.json");
-
-    public TerrariaMap(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
-    {
-    }
 
     public override void Initialize()
     {
@@ -56,7 +52,7 @@ public class TerrariaMap: XocMatPlugin
                     context.GroupFSUpload(e.Chain.GroupUin!.Value, new FileEntity(data, name));
                 }
             }
-                
+
         }
     }
 
@@ -68,7 +64,7 @@ public class TerrariaMap: XocMatPlugin
             var file = await server.GetWorldFile();
             if (file.Status)
             {
-                await args.Bot.GroupFSUpload(args.EventArgs.Chain.GroupUin!.Value,new FileEntity(file.WorldBuffer, file.WorldName + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".wld"));
+                await args.Bot.GroupFSUpload(args.EventArgs.Chain.GroupUin!.Value, new FileEntity(file.WorldBuffer, file.WorldName + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".wld"));
             }
             else
             {

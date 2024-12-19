@@ -1,7 +1,6 @@
 ﻿using Lagrange.XocMat.Attributes;
 using Lagrange.XocMat.Configuration;
 using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace TerrariaMap;
 

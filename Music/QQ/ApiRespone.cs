@@ -20,5 +20,5 @@ public class ApiRespone
     /// 
     /// </summary>
     [JsonProperty("data")]
-    public JObject? Data { get; set; }
+    public JToken? Data { get; set; }
 }

@@ -2,25 +2,17 @@
 
 using Lagrange.Core;
 using Lagrange.Core.Message;
-using Lagrange.XocMat;
 using Lagrange.XocMat.Commands;
-using Lagrange.XocMat.EventArgs;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Permission;
 using Lagrange.XocMat.Plugin;
 using Lagrange.XocMat.Utility;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Security.Cryptography;
 
 namespace Music;
 
-public class Music : XocMatPlugin
+public class Music(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
 {
-    public Music(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
-    {
-    }
-
     public override string Name => "Music";
 
     public override string Description => "提供点歌功能";
@@ -30,7 +22,7 @@ public class Music : XocMatPlugin
     public override Version Version => new(1, 0, 0, 0);
 
     public override void Initialize()
-    { 
+    {
         CommandManager.AddGroupCommand(new("点歌", MusicCmd, OneBotPermissions.Music));
         CommandManager.AddGroupCommand(new("选", ChageMusic, OneBotPermissions.Music));
     }
@@ -129,7 +121,7 @@ public class Music : XocMatPlugin
                             var music = await MusicTool.GetMusicQQ(musicName, id);
                             var json = MusicSigner.Sign(new("qq", music!.Url, music.Music, music.Picture, music.Song, music.Singer));
                             if (json != null)
-                                await args.EventArgs.Reply( MessageBuilder.Group(args.EventArgs.Chain.GroupUin!.Value).LightApp(json));
+                                await args.EventArgs.Reply(MessageBuilder.Group(args.EventArgs.Chain.GroupUin!.Value).LightApp(json));
                         }
                         catch (Exception ex)
                         {
@@ -146,7 +138,7 @@ public class Music : XocMatPlugin
                             var json = MusicSigner.Sign(new("163", music!.JumpUrl, music.MusicUrl, music.Picture, music.Name, string.Join(",", music.Singers)));
                             if (json != null)
                                 await args.EventArgs.Reply(MessageBuilder.Group(args.EventArgs.Chain.GroupUin!.Value).LightApp(json));
-                           
+
                         }
                         catch (Exception ex)
                         {

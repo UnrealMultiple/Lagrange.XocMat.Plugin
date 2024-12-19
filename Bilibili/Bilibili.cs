@@ -12,7 +12,7 @@ using System.Text.Json.Nodes;
 
 namespace Bilibili;
 
-public partial class Bilibili : XocMatPlugin
+public partial class Bilibili(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
 {
     public override string Name => "Bilibili插件";
 
@@ -23,10 +23,6 @@ public partial class Bilibili : XocMatPlugin
     public override Version Version => new(1, 0, 0, 0);
 
     private HttpClient _httpClient = null!;
-
-    public Bilibili(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
-    {
-    }
 
     private async Task<MessageBuilder> ParseVideo(string parseUrl, string id, MessageBuilder builder)
     {
@@ -153,7 +149,7 @@ public partial class Bilibili : XocMatPlugin
             {
                 var _b23 = b23.Groups["B23"].Value;
                 var url = $"https://{_b23}";
-                var response =  _httpClient.GetAsync(url).Result;
+                var response = _httpClient.GetAsync(url).Result;
                 response.EnsureSuccessStatusCode();
                 var path = response.RequestMessage?.RequestUri?.OriginalString ?? throw new Exception("request uri is null.");
                 var bvid = BilibiliHelpers.BVIDRegex().Match(path).Groups["BVID"].Value;
