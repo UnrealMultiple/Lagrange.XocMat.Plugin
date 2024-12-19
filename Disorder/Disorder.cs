@@ -10,7 +10,7 @@ using System.Text.Json.Nodes;
 
 namespace Disorder;
 
-public class Disorder(ILogger logger, CommandManager cmd, BotContext bot) : XocMatPlugin(logger, cmd, bot)
+public class Disorder : XocMatPlugin
 {
     private const string FellowUrl = "https://oiapi.net/API/CPUni/";
 
@@ -20,11 +20,15 @@ public class Disorder(ILogger logger, CommandManager cmd, BotContext bot) : XocM
 
     private readonly static HttpClient client = new();
 
+    public Disorder(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
+    {
+    }
+
     public override void Initialize()
     {
-        cmd.AddGroupCommand(new("今日道侣", Fellow, ""));
-        cmd.AddGroupCommand(new("jrrp", Jrrp, ""));
-        cmd.AddGroupCommand(new("cos", Cos, "onebot.cos.use"));
+        CommandManager.AddGroupCommand(new("今日道侣", Fellow, ""));
+        CommandManager.AddGroupCommand(new("jrrp", Jrrp, ""));
+        CommandManager.AddGroupCommand(new("cos", Cos, "onebot.cos.use"));
     }
 
     private async ValueTask Cos(CommandArgs args)
@@ -100,8 +104,8 @@ public class Disorder(ILogger logger, CommandManager cmd, BotContext bot) : XocM
 
     protected override void Dispose(bool dispose)
     {
-        cmd.GroupCommandDelegate.RemoveAll(x => x.CallBack == Fellow);
-        cmd.GroupCommandDelegate.RemoveAll(x => x.CallBack == Jrrp);
-        cmd.GroupCommandDelegate.RemoveAll(x => x.CallBack == Cos);
+        CommandManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == Fellow);
+        CommandManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == Jrrp);
+        CommandManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == Cos);
     }
 }

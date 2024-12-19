@@ -1,5 +1,6 @@
 ﻿
 
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
 namespace Music.QQ;
@@ -11,25 +12,25 @@ public class MusicData
     /// 
     /// </summary>
     [JsonProperty("url")]
-    public string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("music")]
-    public string Music { get; set; }
+    public string Music { get; set; } = string.Empty;
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("size")]
-    public string Size { get; set; }
+    public string Size { get; set; } = string.Empty;
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("mid")]
-    public string Mid { get; set; }
+    public string Mid { get; set; } = string.Empty;
 
     /// <summary>
     /// 
@@ -41,31 +42,31 @@ public class MusicData
     /// 稻香
     /// </summary>
     [JsonProperty("song")]
-    public string Song { get; set; }
+    public string Song { get; set; } = string.Empty;
 
     /// <summary>
     /// 周杰伦
     /// </summary>
     [JsonProperty("singer")]
-    public string Singer { get; set; }
+    public string Singer { get; set; } = string.Empty;
 
     /// <summary>
     /// 魔杰座
     /// </summary>
     [JsonProperty("album")]
-    public string Album { get; set; }
+    public string Album { get; set; } = string.Empty;
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("singerList")]
-    public List<string> SingerList { get; set; }
+    public List<string> SingerList { get; set; } = [];
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("picture")]
-    public string Picture { get; set; }
+    public string Picture { get; set; } = string.Empty;
 
     /// <summary>
     /// 

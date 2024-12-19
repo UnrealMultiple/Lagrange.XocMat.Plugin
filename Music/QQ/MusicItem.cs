@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Music.QQ;
 
@@ -8,19 +9,19 @@ public class MusicItem
     /// 稻香
     /// </summary>
     [JsonProperty("song")]
-    public string Song { get; set; }
+    public string Song { get; set; } = string.Empty;
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("singer")]
-    public List<string> Singer { get; set; }
+    public List<string> Singer { get; set; } = [];
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("mid")]
-    public string Mid { get; set; }
+    public string Mid { get; set; } = string.Empty;
 
     /// <summary>
     /// 
@@ -32,5 +33,5 @@ public class MusicItem
     /// 
     /// </summary>
     [JsonProperty("picture")]
-    public string Picture { get; set; }
+    public string Picture { get; set; } = string.Empty;
 }

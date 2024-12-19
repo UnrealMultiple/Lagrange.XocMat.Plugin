@@ -15,8 +15,12 @@ using System.Security.Cryptography;
 
 namespace Music;
 
-public class Music(ILogger logger, CommandManager cmdManager, BotContext bot) : XocMatPlugin(logger, cmdManager, bot)
+public class Music : XocMatPlugin
 {
+    public Music(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
+    {
+    }
+
     public override string Name => "Music";
 
     public override string Description => "提供点歌功能";
@@ -27,14 +31,14 @@ public class Music(ILogger logger, CommandManager cmdManager, BotContext bot) : 
 
     public override void Initialize()
     { 
-        cmdManager.AddGroupCommand(new("点歌", MusicCmd, OneBotPermissions.Music));
-        cmdManager.AddGroupCommand(new("选", ChageMusic, OneBotPermissions.Music));
+        CommandManager.AddGroupCommand(new("点歌", MusicCmd, OneBotPermissions.Music));
+        CommandManager.AddGroupCommand(new("选", ChageMusic, OneBotPermissions.Music));
     }
 
     protected override void Dispose(bool dispose)
     {
-        cmdManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == MusicCmd);
-        cmdManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == ChageMusic);
+        CommandManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == MusicCmd);
+        CommandManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == ChageMusic);
     }
 
 
@@ -54,7 +58,7 @@ public class Music(ILogger logger, CommandManager cmdManager, BotContext bot) : 
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError($"点歌错误:{ex.Message}");
+                        Logger.LogError($"点歌错误:{ex.Message}");
                     }
                     MusicTool.ChangeName(musicName[2..], args.EventArgs.Chain.GroupMemberInfo!.Uin);
                     MusicTool.ChangeLocal("网易", args.EventArgs.Chain.GroupMemberInfo!.Uin);

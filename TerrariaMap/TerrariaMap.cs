@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 
 namespace TerrariaMap;
 
-public class TerrariaMap(ILogger logger, CommandManager cmd, BotContext bot) : XocMatPlugin(logger, cmd, bot)
+public class TerrariaMap: XocMatPlugin
 {
     public override string Name => "TerrariaMap";
 
@@ -28,15 +28,19 @@ public class TerrariaMap(ILogger logger, CommandManager cmd, BotContext bot) : X
 
     public string SavePath = Path.Combine(XocMatAPI.SAVE_PATH, "TerrariaMap.json");
 
+    public TerrariaMap(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
+    {
+    }
+
     public override void Initialize()
     {
-        cmd.AddGroupCommand(new("获取地图", LoadWorld, OneBotPermissions.GenerateMap));
-        bot.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
+        CommandManager.AddGroupCommand(new("获取地图", LoadWorld, OneBotPermissions.GenerateMap));
+        BotContext.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
     }
 
     private void Event_OnGroupMessage(BotContext context, GroupMessageEvent e)
     {
-        if (e.Chain.GroupMemberInfo!.Uin != bot.BotUin && e.Chain.FirstOrDefault(x => x is FileEntity) is FileEntity file)
+        if (e.Chain.GroupMemberInfo!.Uin != context.BotUin && e.Chain.FirstOrDefault(x => x is FileEntity) is FileEntity file)
         {
             if (file.FileSize > 1024 * 1024 * 30)
                 return;
@@ -97,7 +101,7 @@ public class TerrariaMap(ILogger logger, CommandManager cmd, BotContext bot) : X
 
     protected override void Dispose(bool dispose)
     {
-        bot.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
-        cmd.GroupCommandDelegate.RemoveAll(x => x.CallBack == LoadWorld);
+        BotContext.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
+        CommandManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == LoadWorld);
     }
 }

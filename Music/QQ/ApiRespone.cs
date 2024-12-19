@@ -1,6 +1,6 @@
 ﻿
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Music.QQ;
 
@@ -14,11 +14,11 @@ public class ApiRespone
 
 
     [JsonProperty("message")]
-    public string Message { get; set; }
+    public string Message { get; set; } = string.Empty;
 
     /// <summary>
     /// 
     /// </summary>
     [JsonProperty("data")]
-    public JsonNode Data { get; set; }
+    public JObject? Data { get; set; }
 }

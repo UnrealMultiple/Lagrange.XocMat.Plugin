@@ -18,7 +18,7 @@ public class MusicQQ
         var data = res.ToObject<ApiRespone>();
         if (data != null && data.Code == 1)
         {
-            return data.Data.ToObject<List<MusicItem>>()!;
+            return data.Data?.ToObject<List<MusicItem>>() ?? [];
         }
         return ret;
     }
@@ -35,7 +35,7 @@ public class MusicQQ
         var data = res.ToObject<ApiRespone>();
         if (data != null && data.Code == 1)
         {
-            return data.Data.ToObject<MusicData>();
+            return data.Data?.ToObject<MusicData>();
         }
         return null;
     }

@@ -12,7 +12,7 @@ using System.Text.Json.Nodes;
 
 namespace Bilibili;
 
-public partial class Bilibili(ILogger logger, CommandManager cmd, BotContext bot) : XocMatPlugin(logger, cmd, bot)
+public partial class Bilibili : XocMatPlugin
 {
     public override string Name => "Bilibili插件";
 
@@ -23,6 +23,10 @@ public partial class Bilibili(ILogger logger, CommandManager cmd, BotContext bot
     public override Version Version => new(1, 0, 0, 0);
 
     private HttpClient _httpClient = null!;
+
+    public Bilibili(ILogger logger, CommandManager commandManager, BotContext bot) : base(logger, commandManager, bot)
+    {
+    }
 
     private async Task<MessageBuilder> ParseVideo(string parseUrl, string id, MessageBuilder builder)
     {
@@ -122,7 +126,7 @@ public partial class Bilibili(ILogger logger, CommandManager cmd, BotContext bot
     public override void Initialize()
     {
         _httpClient = new HttpClient();
-        bot.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
+        BotContext.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
         Logger.LogInformation("Plugin Bilibili Initiate Successfully!");
     }
 
@@ -140,9 +144,9 @@ public partial class Bilibili(ILogger logger, CommandManager cmd, BotContext bot
             if (appid?.ToString() == "1109937557")
                 text = (data?["meta"]?["detail_1"]?["qqdocurl"])?.ToString();
         }
-        var b23 = BilibiliHelpers.B23_Regex().Match(text);
-        var bv = BilibiliHelpers.Bv_Regex().Match(text);
-        var av = BilibiliHelpers.Av_Regex().Match(text);
+        var b23 = BilibiliHelpers.B23_Regex().Match(text ?? string.Empty);
+        var bv = BilibiliHelpers.Bv_Regex().Match(text ?? string.Empty);
+        var av = BilibiliHelpers.Av_Regex().Match(text ?? string.Empty);
         if (b23.Success)
         {
             try
@@ -202,7 +206,7 @@ public partial class Bilibili(ILogger logger, CommandManager cmd, BotContext bot
         if (dispose)
         {
             _httpClient.Dispose();
-            bot.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
+            BotContext.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
         }
         base.Dispose();
     }
