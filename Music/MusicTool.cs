@@ -1,4 +1,6 @@
 ﻿
+using Music.QQ.Internal.Search.Song;
+using Music.WangYi;
 using System.Text;
 
 namespace Music;
@@ -9,9 +11,9 @@ public class MusicTool
     private static readonly Dictionary<long, string> MusicLocal = [];
     private static readonly Dictionary<long, string> MusicName = [];
 
-    public static async Task<List<QQ.MusicItem>> GetMusicQQList(string musicName)
+    public static async Task<List<SongData>> GetMusicQQList(string musicName)
     {
-        return await QQ.MusicQQ.GetMusicList(musicName, Config.Instance.Key);
+        return await Config.Instance.MusicQQ.SearchSong(musicName);
     }
 
     public static async Task<string> QQMusic(string musicName)
@@ -21,7 +23,7 @@ public class MusicTool
         int i = 1;
         list.ForEach(x =>
         {
-            ret += $"[{i}].{x.Song} -- {x.Singer}\n";
+            ret += $"[{i}].{x.Name} -- {string.Join(",", x.Singer.Select(i => i.Name))}\n";
             i++;
         });
         ret += "资源来自于QQ音乐";
@@ -37,7 +39,7 @@ public class MusicTool
         sb.AppendLine("# QQ音乐");
         for (int i = 0; i < list.Count; i++)
         {
-            sb.AppendLine($"## `{i + 1}`- {list[i].Song} -- {string.Join(",", list[i].Singer)}");
+            sb.AppendLine($"## `{i + 1}`- {list[i].Name} -- {string.Join(",", list[i].Singer.Select(i => i.Name))}");
         }
         sb.AppendLine();
         sb.AppendLine($$"""</div>""");
@@ -75,19 +77,19 @@ public class MusicTool
 
     }
 
-    public static async Task<List<_163.MusicData>> GetMusic163List(string musicName)
+    public static async Task<List<MusicData>> GetMusic163List(string musicName)
     {
-        return await new _163.Music_163().GetMusicListByName(musicName);
+        return await Music_163.GetMusicListByName(musicName);
     }
 
-    public static async Task<QQ.MusicData?> GetMusicQQ(string musicName, int index)
+    public static async Task<SongData> GetMusicQQ(string musicName, int index)
     {
-        return await QQ.MusicQQ.GetMusic(musicName, index, Config.Instance.Key);
+        return await Config.Instance.MusicQQ.GetSong(musicName, index);
     }
 
-    public static async Task<_163.MusicData?> GetMusic163(string musicName, int index)
+    public static async Task<MusicData?> GetMusic163(string musicName, int index)
     {
-        return await new _163.Music_163().GetMusic(musicName, index);
+        return await Music_163.GetMusic(musicName, index);
     }
 
     public static void ChangeLocal(string local, long uin)

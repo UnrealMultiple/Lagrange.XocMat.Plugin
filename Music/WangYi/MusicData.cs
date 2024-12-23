@@ -1,4 +1,4 @@
-﻿namespace Music._163;
+﻿namespace Music.WangYi;
 
 public class MusicData
 {
