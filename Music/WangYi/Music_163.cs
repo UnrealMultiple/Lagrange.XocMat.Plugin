@@ -1,6 +1,6 @@
+using Music.QQ;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -215,44 +215,36 @@ public class Music_163
         if (playlist.Code != 200 || playlist.Playlist.Tracks.Length == 0)
             throw new Exception("获取歌单失败!");
         var list = playlist.Playlist.Tracks.ToDictionary(i => i.Id, i => i);
-        var zipName = $"网易歌单[{id}].zip";
         //分割mid
         var SpitMid = list.Keys.ToArray().Chunk(100).Select(s => s.ToList()).ToList();
         //将url全部保存
-        var urls = new Dictionary<long, string>();
+        var songurls = new Dictionary<long, string>();
         foreach (var item in SpitMid)
         {
             var url = await GetMusicUrlByid([.. item]);
-            urls = urls.Concat(url).ToDictionary(k => k.Key, v => v.Value);
+            songurls = songurls.Concat(url).ToDictionary(k => k.Key, v => v.Value);
         }
-        using var ms = new MemoryStream();
-        using var zip = new ZipArchive(ms, ZipArchiveMode.Create);
-        SemaphoreSlim SemaphoreSlim = new(1);
-        using var client = new HttpClient();
-        foreach (var (mid, song) in list)
+        SemaphoreSlim SemaphoreSlim = new(7);
+        var tasks = list.Select(async i =>
         {
             await SemaphoreSlim.WaitAsync();
             try
             {
-                var url = urls[mid];
-                var buffer = await client.GetByteArrayAsync(url);
-                var entry = zip.CreateEntry(song.Name + ".mp3", CompressionLevel.Fastest);
-                using var stream = entry.Open();
-                stream.Write(buffer);
-                stream.Flush();
+                var url = songurls[i.Key];
+                var buffer = await Client.GetByteArrayAsync(url);
+                return (i.Value.Name + ".mp3", buffer);
             }
             catch
             {
-
+                return (i.Value.Name + ".mp3", Array.Empty<byte>());
             }
             finally
             {
                 SemaphoreSlim.Release();
             }
-        }
-        ms.Flush();
-        zip.Dispose();
-        return ms.ToArray();
+        });
+        var taskres = await Task.WhenAll(tasks);
+        return Utils.GenerateCompressed(taskres.ToDictionary(i => i.Item1, i => i.Item2));
     }
 
     /// <summary>

@@ -40,7 +40,7 @@ public class Config : JsonConfigBase<Config>
     {
         if (token == null)
             return;
-        _MusicQQ = new Music_QQ(token);
+        _MusicQQ?.ChangeToken(token);
         Token = token;
     }
 }

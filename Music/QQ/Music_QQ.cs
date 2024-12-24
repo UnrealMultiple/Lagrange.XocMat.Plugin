@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Net;
+﻿using System.Net;
 using Newtonsoft.Json.Linq;
 using Music.QQ.Internal;
 using Music.QQ.Internal.MusicToken;
@@ -9,7 +8,7 @@ using Music.QQ.Internal.Search;
 using Music.QQ.Internal.User;
 using Music.QQ.Internal.Search.Song;
 using Music.QQ.Enums;
-using System.IO.Compression;
+using Lagrange.XocMat.Extensions;
 
 namespace Music.QQ;
 
@@ -44,6 +43,7 @@ public class Music_QQ
         Token = token;
     }
 
+    public void ChangeToken(TokenInfo token) => Token = token;
 
     public async Task<HomePageData> GetUserInfo()
     {
@@ -60,7 +60,7 @@ public class Music_QQ
         return (await Send(req)).Req.Data?.ToObject<HomePageData>() ?? throw new Exception("获取信息失败!");
     }
 
-    public async Task<TokenInfo> RefreshToken()
+    public async Task<(TokenInfo, bool)> RefreshToken()
     {
         var req = new
         {
@@ -75,13 +75,10 @@ public class Music_QQ
             }
         };
         var response = await Send(req);
-        var obj = response.Req.Data?.ToObject<TokenInfo>() ?? throw new Exception("token刷新失败!");
+        var token = response.Req.Data?.ToObject<TokenInfo>() ?? throw new Exception("token刷新失败!");
         var cookie = Cookie.GetCookies(new Uri(QQMusicApi)).ToDictionary(c => c.Name, c => c.Value);
-        if (response.Req.Code != 0)
-            return Token;
-        obj.Cookie = cookie;
-        Token = obj;
-        return obj;
+        token.Cookie = cookie;
+        return (response.Req.Code == 0 ? token : Token, response.Req.Code == 0);
     }
 
     public async Task<bool> CheckExpired()
@@ -98,6 +95,14 @@ public class Music_QQ
 
     public async Task<Response> Send(object req)
     {
+        if(Token.ExpiredAt < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+        {
+            var (token, success) = await RefreshToken();
+            if (success)
+            {
+                ChangeToken(token);
+            }
+        }
         var param = new
         {
             comm = new
@@ -117,10 +122,10 @@ public class Music_QQ
             },
             req
         };
-        var content = new StringContent(JsonConvert.SerializeObject(param));
+        var content = new StringContent(param.ToJson());
         var res = await client.PostAsync(QQMusicApi, content);
         var json = await res.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<Response>(json) ?? throw new Exception("获取返回数据失败!!");
+        return json.ToObject<Response>() ?? throw new Exception("获取返回数据失败!!");
     }
 
     public async Task<List<SongData>> SearchSong(string name)
@@ -151,44 +156,36 @@ public class Music_QQ
     {
         var playlist = await GetDetail(id);
         var list = playlist.Songlist.ToDictionary(i => i.Mid, i => i);
-        var zipName = $"歌单[{id}].zip";
         //分割mid
         var SpitMid = list.Keys.ToArray().Chunk(100).Select(s => s.ToList()).ToList();
         //将url全部保存
-        var urls = new Dictionary<string, string>();
+        var songurls = new Dictionary<string, string>();
         foreach (var item in SpitMid)
         {
             var url = await GetSongData(SongFileType.MP3_128, [.. item]);
-            urls = urls.Concat(url.ToDictionary(i => i.Key, i => i.Value.PlayUrl)).ToDictionary(k => k.Key, v => v.Value);
+            songurls = songurls.Concat(url.ToDictionary(i => i.Key, i => i.Value.PlayUrl)).ToDictionary(k => k.Key, v => v.Value);
         }
-        using var ms = new MemoryStream();
-        using var zip = new ZipArchive(ms, ZipArchiveMode.Create);
-        SemaphoreSlim SemaphoreSlim = new(1);
-        using var client = new HttpClient();
-        foreach (var (mid, song) in list)
+        SemaphoreSlim SemaphoreSlim = new(7);
+        var tasks = list.Select(async i =>
         {
             await SemaphoreSlim.WaitAsync();
             try
             {
-                var url = urls[mid];
+                var url = songurls[i.Key];
                 var buffer = await client.GetByteArrayAsync(url);
-                var entry = zip.CreateEntry(song.Name + ".mp3", CompressionLevel.Fastest);
-                using var stream = entry.Open();
-                stream.Write(buffer);
-                stream.Flush();
+                return (i.Value.Name + ".mp3", buffer);
             }
             catch
             {
-
+                return (i.Value.Name + ".mp3", Array.Empty<byte>());
             }
             finally
             {
                 SemaphoreSlim.Release();
             }
-        }
-        ms.Flush();
-        zip.Dispose();
-        return ms.ToArray();
+        });
+        var taskres = await Task.WhenAll(tasks);
+        return Utils.GenerateCompressed(taskres.ToDictionary(i => i.Item1, i => i.Item2));
     }
 
     public async Task<PlayData> GetDetail(long id, int dirid = 0)

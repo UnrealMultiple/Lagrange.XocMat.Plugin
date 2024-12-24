@@ -1,9 +1,28 @@
-﻿using System.Web;
+﻿using System.IO.Compression;
+using System.Web;
 
 namespace Music.QQ;
 
 public class Utils
 {
+    public static byte[] GenerateCompressed(Dictionary<string, byte[]> data)
+    {
+        using var ms = new MemoryStream();
+        using var zip = new ZipArchive(ms, ZipArchiveMode.Create);
+        foreach (var (filename, buffer) in data)
+        {
+            if(buffer is null || buffer.Length == 0)
+                continue;
+            var entry = zip.CreateEntry(filename, CompressionLevel.Fastest);
+            using var stream = entry.Open();
+            stream.Write(buffer);
+            stream.Flush();
+        }
+        ms.Flush();
+        zip.Dispose();
+        return ms.ToArray();
+    }
+
     public static string QueryUri(string url, Dictionary<string, string>? @params = null)
     {
         var uri = new UriBuilder(url);
