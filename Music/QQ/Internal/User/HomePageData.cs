@@ -1,8 +1,8 @@
 ﻿#pragma warning disable CS8618   // Naming Styles
 namespace Music.QQ.Internal.User;
 
-using System;
 using Newtonsoft.Json;
+using System;
 public partial class HomePageData
 {
     [JsonProperty("Info")]

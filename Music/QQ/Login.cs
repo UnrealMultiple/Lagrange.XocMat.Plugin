@@ -26,7 +26,7 @@ public partial class Login
         UseCookies = true
     };
 
-    private static readonly HttpClient client = new (httpClientHandler)
+    private static readonly HttpClient client = new(httpClientHandler)
     {
         DefaultRequestHeaders = { { "Referer", "https://xui.ptlogin2.qq.com/" } }
     };
@@ -49,7 +49,7 @@ public partial class Login
             { "daid", "383" },
             { "pt_3rd_aid", "100497308" }
         };
-        
+
         var uri = new Uri(Utils.QueryUri(QrLoginApi, paramsDict));
         var res = await client.GetAsync(uri);
         var bytes = await res.Content.ReadAsByteArrayAsync();
@@ -59,7 +59,7 @@ public partial class Login
 
 
     public static async Task<TokenInfo> GetQQMusicToken(string code, int gtk)
-    { 
+    {
         // 创建匿名类表示JSON对象
         var request = new
         {
@@ -76,7 +76,7 @@ public partial class Login
                 method = "QQLogin",
                 param = new
                 {
-                     code
+                    code
                 }
             }
         };
@@ -151,7 +151,7 @@ public partial class Login
         {
             await timerTask.ConfigureAwait(false);
         }
-        catch (OperationCanceledException) when(cts.IsCancellationRequested)
+        catch (OperationCanceledException) when (cts.IsCancellationRequested)
         {
             action(QrcodeLoginType.CANCEL, null);
         }
@@ -196,15 +196,15 @@ public partial class Login
         };
         var url = Utils.QueryUri(CheckQrLoginApi, parameters);
         var res = await client.GetAsync(url);
-        if(!res.IsSuccessStatusCode) throw new HttpRequestException("CheckLoginQrcode failed!");
+        if (!res.IsSuccessStatusCode) throw new HttpRequestException("CheckLoginQrcode failed!");
         var results = await res.Content.ReadAsStringAsync();
         var match = RegexHelper.RegexState().Match(results);
-        if(!match.Success) throw new Exception("CheckLoginQrcode failed!");
+        if (!match.Success) throw new Exception("CheckLoginQrcode failed!");
         var val = match.Groups[1].Value;
         var data = val.Split(",").Select(s => s.Trim('\'')).ToArray();
         var cookieuri = new Uri(QQMusicApi);
-        var state = data[0] switch 
-        { 
+        var state = data[0] switch
+        {
             "0" => QrcodeLoginType.DONE,
             "65" => QrcodeLoginType.TIMEOUT,
             "66" => QrcodeLoginType.SCAN,
@@ -213,12 +213,12 @@ public partial class Login
             _ => QrcodeLoginType.OTHER
         };
         if (state == QrcodeLoginType.DONE)
-        { 
+        {
             var sigx = RegexHelper.RegexSigx().Match(data[2]).Groups[1].Value;
             var uin = RegexHelper.RegexUin().Match(data[2]).Groups[1].Value;
             var pskey = await CheckSig(uin, sigx);
             var code = await Authorize(pskey);
-            var token =  await GetQQMusicToken(code, Utils.Hash33(pskey));
+            var token = await GetQQMusicToken(code, Utils.Hash33(pskey));
             token.Cookie = cookie.GetCookies(cookieuri).ToDictionary(c => c.Name, c => c.Value);
             token.P_Skey = pskey;
             action(state, token);

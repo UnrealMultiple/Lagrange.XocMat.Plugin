@@ -34,7 +34,7 @@ public class Music(ILogger logger, CommandManager commandManager, BotContext bot
 
     private async ValueTask ChangeMusicSource(CommandArgs args)
     {
-       if(args.Parameters.Count > 0)
+        if (args.Parameters.Count > 0)
         {
             if (args.Parameters[0] == "QQ" || args.Parameters[0] == "网易")
             {
@@ -74,7 +74,7 @@ public class Music(ILogger logger, CommandManager commandManager, BotContext bot
             }
         }
         else
-        { 
+        {
             await args.EventArgs.Reply("请输入一个正确的歌单ID!");
         }
     }
@@ -91,9 +91,9 @@ public class Music(ILogger logger, CommandManager commandManager, BotContext bot
         {
             var (qrsig, buffer) = await Login.GetLoginQrcode();
             await args.EventArgs.Reply(MessageBuilder.Group(args.EventArgs.Chain.GroupUin!.Value).Image(buffer).Text("请尽快扫描此二维码60秒后失效"));
-            await Login.CheckLoginQrcode(qrsig, 120,  async (state, token) =>
-            { 
-                if(state == QQ.Enums.QrcodeLoginType.DONE)
+            await Login.CheckLoginQrcode(qrsig, 120, async (state, token) =>
+            {
+                if (state == QQ.Enums.QrcodeLoginType.DONE)
                 {
                     Config.Instance.SetToken(token);
                     Config.Instance.SaveTo();
@@ -114,11 +114,11 @@ public class Music(ILogger logger, CommandManager commandManager, BotContext bot
                 }
             });
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await args.EventArgs.Reply(ex.Message);
         }
-        
+
     }
 
     #region 点歌
@@ -206,8 +206,8 @@ public class Music(ILogger logger, CommandManager commandManager, BotContext bot
                         try
                         {
                             var music = await MusicTool.GetMusicQQ(musicName, id);
-                            var json = MusicSigner.Sign(new("qq", music.PageUrl, music.PlayUrl, music.Album.Picture, music.Name, string.Join(",", music.Singer.Select(i=>i.Name))));
-                            
+                            var json = MusicSigner.Sign(new("qq", music.PageUrl, music.PlayUrl, music.Album.Picture, music.Name, string.Join(",", music.Singer.Select(i => i.Name))));
+
                             if (json != null)
                                 await args.EventArgs.Reply(MessageBuilder.Group(args.EventArgs.Chain.GroupUin!.Value).LightApp(json));
                         }

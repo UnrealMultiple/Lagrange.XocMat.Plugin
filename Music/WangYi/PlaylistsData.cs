@@ -3,8 +3,8 @@
 
 namespace Music.WangYi;
 
-using System;
 using Newtonsoft.Json;
+using System;
 
 public partial class PlaylistsData
 {

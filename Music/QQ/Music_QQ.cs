@@ -1,14 +1,14 @@
-﻿using System.Net;
-using Newtonsoft.Json.Linq;
+﻿using Lagrange.XocMat.Extensions;
+using Music.QQ.Enums;
 using Music.QQ.Internal;
 using Music.QQ.Internal.MusicToken;
 using Music.QQ.Internal.Playlists;
 using Music.QQ.Internal.QuerSong;
 using Music.QQ.Internal.Search;
-using Music.QQ.Internal.User;
 using Music.QQ.Internal.Search.Song;
-using Music.QQ.Enums;
-using Lagrange.XocMat.Extensions;
+using Music.QQ.Internal.User;
+using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace Music.QQ;
 
@@ -95,7 +95,7 @@ public class Music_QQ
 
     public async Task<Response> Send(object req)
     {
-        if(Token.ExpiredAt < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+        if (Token.ExpiredAt < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
         {
             var (token, success) = await RefreshToken();
             if (success)
@@ -163,7 +163,7 @@ public class Music_QQ
         foreach (var item in SpitMid)
         {
             var url = await GetSongData(SongFileType.MP3_128, [.. item]);
-            songurls = songurls.Concat(url.ToDictionary(i => i.Key, i => i.Value.PlayUrl)).ToDictionary(k => k.Key, v => v.Value);
+            songurls = songurls.Concat(url.ToDictionary(i => i.Mid, i => i.PlayUrl)).ToDictionary(k => k.Key, v => v.Value);
         }
         SemaphoreSlim SemaphoreSlim = new(7);
         var tasks = list.Select(async i =>
@@ -259,7 +259,7 @@ public class Music_QQ
         return res.Tracks;
     }
 
-    public async Task<Dictionary<string, SongData>> GetSongData(SongFileType type, params string[] mid)
+    public async Task<List<SongData>> GetSongData(SongFileType type, params string[] mid)
     {
         var domain = "https://ws.stream.qqmusic.qq.com/";
         var songs = await QuerySongData(mid);
@@ -270,15 +270,15 @@ public class Music_QQ
             method = "UrlGetVkey",
             param = new
             {
-                filename = mid.Select(s => $"{type.GetSongFormat()}{type}{type.GetSongExtension()}"),
-                songmid = mid,
+                filename = mid.Select(s => $"{type.GetSongFormat()}{type}{type.GetSongExtension()}").Concat(songs.Select(s => $"RS02{s.Vs[0]}.mp3")),
+                songmid = mid.Concat(songs.Select(s => s.Mid)),
                 guid = Guid.NewGuid().ToString("N"),
-                songtype = mid.Select(_ => 0),
+                songtype = mid.Select(_ => 0).Concat(songs.Select(s => 0)),
             }
         };
         var res = await Send(req);
         var array = res.Req.Data?["midurlinfo"]?.Value<JArray>();
-        var trysong = new List<string>();
+
         if (array is not null)
         {
             foreach (var item in array)
@@ -287,22 +287,13 @@ public class Music_QQ
                 var url = item["wifiurl"]!.Value<string>()!;
                 if (string.IsNullOrEmpty(url))
                 {
-                    trysong.Add(songmid);
                     continue;
                 }
-                songDic[songmid].PlayUrl = domain + url;
+                if (string.IsNullOrEmpty(songDic[songmid].PlayUrl))
+                    songDic[songmid].PlayUrl = domain + url;
             }
         }
-        if (trysong.Count > 0)
-        {
-            var trysongs = songDic.Where(i => trysong.Contains(i.Key));
-            var tryUrls = await GetTrySongUrl(trysongs.ToDictionary(i => i.Key, i => i.Value.Vs[0]));
-            foreach (var (key, value) in tryUrls)
-            {
-                songDic[key].PlayUrl = value;
-            }
-        }
-        return songDic;
+        return [.. songDic.Values];
     }
 
     public async Task<SongData> GetSong(string musicName, int index)
@@ -310,6 +301,6 @@ public class Music_QQ
         var data = await SearchSong(musicName);
         if (index < 1 || index > data.Count)
             index = 1;
-        return (await GetSongData(SongFileType.MP3_128, data[index - 1].Mid)).First().Value;
+        return (await GetSongData(SongFileType.MP3_128, data[index - 1].Mid)).First();
     }
 }

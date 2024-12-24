@@ -11,7 +11,7 @@ public class Utils
         using var zip = new ZipArchive(ms, ZipArchiveMode.Create);
         foreach (var (filename, buffer) in data)
         {
-            if(buffer is null || buffer.Length == 0)
+            if (buffer is null || buffer.Length == 0)
                 continue;
             var entry = zip.CreateEntry(filename, CompressionLevel.Fastest);
             using var stream = entry.Open();
