@@ -21,7 +21,7 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
 
     public override Version Version => new(1, 0, 0, 0);
 
-    private PluginLoader Loader => XocMatHostAppBuilder.instance.App.Services.GetRequiredService<PluginLoader>();
+    private PluginLoader Loader => XocMatApp.Instance.Services.GetRequiredService<PluginLoader>();
 
     public override void Initialize()
     {

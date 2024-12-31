@@ -1,5 +1,9 @@
-﻿using Lagrange.XocMat.Attributes;
+﻿using Lagrange.XocMat;
+using Lagrange.XocMat.Attributes;
 using Lagrange.XocMat.Configuration;
+using Lagrange.XocMat.Plugin;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Music.QQ;
 using Music.QQ.Internal.MusicToken;
 using Newtonsoft.Json;
@@ -20,6 +24,9 @@ public class Config : JsonConfigBase<Config>
     private Music_QQ? _MusicQQ = null;
 
     [JsonIgnore]
+    private static ILogger? Logger => XocMatApp.Instance.Services.GetRequiredService<PluginLoader>().PluginContext.Plugins.FirstOrDefault(i => i is Music)?.Logger;
+
+    [JsonIgnore]
     public Music_QQ MusicQQ
     {
         get
@@ -31,9 +38,17 @@ public class Config : JsonConfigBase<Config>
                     throw new Exception("未设置QQ音乐令牌信息");
                 }
                 _MusicQQ = new Music_QQ(Token);
+                _MusicQQ.TokenUpdated += MusicQQ_TokenUpdated;
             }
             return _MusicQQ;
         }
+    }
+
+    private void MusicQQ_TokenUpdated(TokenInfo obj)
+    {
+        Token = obj;
+        Save();
+        Logger?.LogInformation("[Music] QQ音乐令牌信息已更新");
     }
 
     public void SetToken(TokenInfo? token)

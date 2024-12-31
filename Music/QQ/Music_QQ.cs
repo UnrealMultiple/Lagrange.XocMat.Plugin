@@ -24,6 +24,10 @@ public class Music_QQ
 
     private TokenInfo Token;
 
+    public event Action<TokenInfo>? TokenUpdated;
+
+    private bool isRefresh = false;
+
     public Music_QQ(TokenInfo token)
     {
         Cookie = new();
@@ -41,9 +45,14 @@ public class Music_QQ
             DefaultRequestHeaders = { { "Referer", "y.qq.com" }, { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0" } }
         };
         Token = token;
+       
     }
 
-    public void ChangeToken(TokenInfo token) => Token = token;
+    public void ChangeToken(TokenInfo token)
+    { 
+        Token = token;
+        TokenUpdated?.Invoke(token);
+    }
 
     public async Task<HomePageData> GetUserInfo()
     {
@@ -95,13 +104,18 @@ public class Music_QQ
 
     public async Task<Response> Send(object req)
     {
-        if (Token.ExpiredAt < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+        if (!isRefresh)
         {
-            var (token, success) = await RefreshToken();
-            if (success)
+            isRefresh = true;
+            if(Token.KeyExpiresIn < DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - Token.MusickeyCreateTime)
             {
-                ChangeToken(token);
+                var (token, success) = await RefreshToken();
+                if (success)
+                {
+                    ChangeToken(token);
+                }
             }
+            isRefresh = false;
         }
         var param = new
         {

@@ -2,6 +2,7 @@
 using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Message;
 using Lagrange.XocMat.Commands;
+using Lagrange.XocMat.DB.Manager;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Plugin;
 using Lagrange.XocMat.Utility;
@@ -33,6 +34,17 @@ public class Disorder(ILogger logger, CommandManager commandManager, BotContext 
         CommandManager.AddGroupCommand(new("今日道侣", Fellow, ""));
         CommandManager.AddGroupCommand(new("jrrp", Jrrp, ""));
         CommandManager.AddGroupCommand(new("cos", Cos, "onebot.cos.use"));
+        CommandManager.AddGroupCommand(new("ban", Ban, "onebot.account.ban"));
+    }
+
+    private async ValueTask Ban(CommandArgs args)
+    {
+        var mentions = args.EventArgs.Chain.GetMention().Select(i => i.Uin);
+        long userid = 0;
+        if (!mentions.Any())
+        {
+            userid = mentions.First();
+        }
     }
 
     private async ValueTask Cos(CommandArgs args)
