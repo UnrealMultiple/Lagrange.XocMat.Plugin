@@ -13,12 +13,12 @@ jobs:
         with:
            submodules: 'recursive'
            
-      - name: 初始化.NET 8
+      - name: 初始化.NET 9
         uses: actions/setup-dotnet@v4
         env:
           DOTNET_CLI_UI_LANGUAGE: zh-CN
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
           
       - name: 构建插件
         run: |

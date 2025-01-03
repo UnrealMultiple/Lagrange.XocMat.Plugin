@@ -33,7 +33,7 @@ public class Music_QQ
         Cookie = new();
         foreach (var item in token.Cookie)
         {
-            Cookie.Add(new Cookie(item.Key, item.Value, "/", "y.qq.com"));
+            Cookie.Add(new Cookie(item.Key, item.Value, "/", "u.y.qq.com"));
         }
         httpClientHandler = new()
         {
@@ -75,12 +75,18 @@ public class Music_QQ
         {
             module = "QQConnectLogin.LoginServer",
             method = "QQLogin",
+            ignore_code = 1,
             param = new
             {
-                refresh_key = Token.RefreshToken,
+                refresh_key = Token.RefreshKey,
                 refresh_token = Token.RefreshToken,
                 musickey = Token.Musickey,
                 musicid = Token.Musicid,
+
+            },
+            extra_common = new
+            {
+                tmeLoginType = Token.LoginType.ToString()
             }
         };
         var response = await Send(req);
