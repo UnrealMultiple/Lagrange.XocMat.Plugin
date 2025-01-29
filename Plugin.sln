@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BindTSplayer", "BindTSplaye
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineReward", "OnlineReward\OnlineReward.csproj", "{25B27A95-B651-4007-AD81-74A107B37785}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHook", "GitHook\GitHook.csproj", "{042C2F4A-760B-4370-A12A-B817525DA6EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{25B27A95-B651-4007-AD81-74A107B37785}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25B27A95-B651-4007-AD81-74A107B37785}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25B27A95-B651-4007-AD81-74A107B37785}.Release|Any CPU.Build.0 = Release|Any CPU
+		{042C2F4A-760B-4370-A12A-B817525DA6EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{042C2F4A-760B-4370-A12A-B817525DA6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{042C2F4A-760B-4370-A12A-B817525DA6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{042C2F4A-760B-4370-A12A-B817525DA6EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

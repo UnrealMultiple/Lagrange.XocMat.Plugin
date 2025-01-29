@@ -21,8 +21,6 @@ public class FollowConfig : JsonConfigBase<FollowConfig>
 
     protected override string Filename => "Follow";
 
-    protected override string? ReloadMsg => "[今日道侣] config reload successfully!\n";
-
     [JsonProperty("道侣数据")]
     public Dictionary<long, FollowWeapon> TempSave { get; set; } = [];
 

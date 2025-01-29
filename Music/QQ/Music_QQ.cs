@@ -12,7 +12,7 @@ using System.Net;
 
 namespace Music.QQ;
 
-public class Music_QQ
+public class Music_QQ : IDisposable
 {
     internal const string QQMusicApi = "https://u.y.qq.com/cgi-bin/musicu.fcg";
 
@@ -24,9 +24,9 @@ public class Music_QQ
 
     private TokenInfo Token;
 
-    public event Action<TokenInfo>? TokenUpdated;
+    private System.Timers.Timer timer;
 
-    private bool isRefresh = false;
+    public event Action<TokenInfo>? TokenUpdated;
 
     public Music_QQ(TokenInfo token)
     {
@@ -45,7 +45,26 @@ public class Music_QQ
             DefaultRequestHeaders = { { "Referer", "y.qq.com" }, { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0" } }
         };
         Token = token;
-       
+        timer = new System.Timers.Timer
+        {
+            AutoReset = true,
+            Interval = 60 * 10 * 1000,
+            Enabled = true
+        };
+        timer.Elapsed += Timer_Elapsed;
+        timer.Start();
+    }
+
+    private async void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (Token.KeyExpiresIn < DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - Token.MusickeyCreateTime)
+        {
+            var (token, success) = await RefreshToken();
+            if (success)
+            {
+                ChangeToken(token);
+            }
+        }
     }
 
     public void ChangeToken(TokenInfo token)
@@ -110,19 +129,6 @@ public class Music_QQ
 
     public async Task<Response> Send(object req)
     {
-        if (!isRefresh)
-        {
-            isRefresh = true;
-            if(Token.KeyExpiresIn < DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - Token.MusickeyCreateTime)
-            {
-                var (token, success) = await RefreshToken();
-                if (success)
-                {
-                    ChangeToken(token);
-                }
-            }
-            isRefresh = false;
-        }
         var param = new
         {
             comm = new
@@ -322,5 +328,14 @@ public class Music_QQ
         if (index < 1 || index > data.Count)
             index = 1;
         return (await GetSongData(SongFileType.MP3_128, data[index - 1].Mid)).First();
+    }
+
+    public void Dispose()
+    {
+        timer.Stop();
+        timer.Dispose();
+        client.Dispose();
+        httpClientHandler.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

@@ -15,8 +15,6 @@ public class Config : JsonConfigBase<Config>
 {
     protected override string Filename => "Music";
 
-    protected override string? ReloadMsg => "[Music] config reload successfully!\n";
-
     [JsonProperty("QQ音乐令牌信息")]
     public TokenInfo? Token { get; set; }
 
@@ -24,7 +22,7 @@ public class Config : JsonConfigBase<Config>
     private Music_QQ? _MusicQQ = null;
 
     [JsonIgnore]
-    private static ILogger? Logger => XocMatApp.Instance.Services.GetRequiredService<PluginLoader>().PluginContext.Plugins.FirstOrDefault(i => i is Music)?.Logger;
+    private static ILogger? Logger => XocMatApp.Instance.Services.GetRequiredService<PluginLoader>().PluginContext.Plugins.FirstOrDefault(i => i.Plugin is Music)?.Plugin?.Logger;
 
     [JsonIgnore]
     public Music_QQ MusicQQ
@@ -55,7 +53,7 @@ public class Config : JsonConfigBase<Config>
     {
         if (token == null)
             return;
-        _MusicQQ?.ChangeToken(token);
         Token = token;
+        MusicQQ?.ChangeToken(token);
     }
 }

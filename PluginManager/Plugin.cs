@@ -57,12 +57,12 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
             sb.AppendLine();
             sb.AppendLine($"# 插件列表");
             sb.AppendLine();
-            sb.AppendLine("|序号|插件名称|插件作者|插件说明|插件版本|");
-            sb.AppendLine("|:--:|:--:|:--:|:--:|:--:|");
+            sb.AppendLine("|序号|插件名称|插件作者|插件说明|插件版本|启用|");
+            sb.AppendLine("|:--:|:--:|:--:|:--:|:--:|:--:|");
             int index = 1;
             foreach (var plugin in Loader.PluginContext.Plugins)
             {
-                sb.AppendLine($"|{index}|{plugin.Name}|{plugin.Author}|{plugin.Description}|{plugin.Version}");
+                sb.AppendLine($"|{index}|{plugin.Plugin.Name}|{plugin.Plugin.Author}|{plugin.Plugin.Description}|{plugin.Plugin.Version}|{plugin.Initialized}|");
                 index++;
             }
             sb.AppendLine();
@@ -78,8 +78,13 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
                 return;
             }
             var instance = Loader.PluginContext.Plugins[index - 1];
-            instance.Dispose();
-            await args.EventArgs.Reply($"{instance.Name} 插件卸载成功!", true);
+            if (!instance.Initialized)
+            {
+                await args.EventArgs.Reply("此插件已经被卸载，无需重复卸载!!", true);
+                return;
+            }
+            instance.DeInitialize();
+            await args.EventArgs.Reply($"{instance.Plugin.Name} 插件卸载成功!", true);
         }
         else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "on")
         {
@@ -89,8 +94,13 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
                 return;
             }
             var instance = Loader.PluginContext.Plugins[index - 1];
+            if (instance.Initialized)
+            {
+                await args.EventArgs.Reply("此插件已经被启用，无需重复启用!!", true);
+                return;
+            }
             instance.Initialize();
-            await args.EventArgs.Reply($"{instance.Name} 插件加载成功!", true);
+            await args.EventArgs.Reply($"{instance.Plugin.Name} 插件加载成功!", true);
         }
         else if (args.Parameters.Count == 1 && args.Parameters[0].ToLower() == "reload")
         {

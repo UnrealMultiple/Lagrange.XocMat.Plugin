@@ -9,8 +9,6 @@ public class Config : JsonConfigBase<Config>
 {
     protected override string Filename => "Cart";
 
-    protected override string? ReloadMsg => "[Cart] config reload successfully!\n";
-
     public Dictionary<long, Dictionary<string, List<int>>> Carts { get; set; } = new();
 
     public void Add(long uin, string cartName, int id)

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\template.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Octokit" Version="14.0.0" />
+    <PackageReference Include="Octokit.Webhooks" Version="2.4.1" />
+  </ItemGroup>
+
+  <PropertyGroup>
+	  <PackNames>Octokit.dll;Octokit.Webhooks.dll</PackNames>
+  </PropertyGroup>
+
+</Project>
+

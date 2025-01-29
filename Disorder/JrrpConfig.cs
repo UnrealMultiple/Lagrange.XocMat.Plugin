@@ -21,8 +21,6 @@ public class JrrpConfig : JsonConfigBase<JrrpConfig>
 
     protected override string Filename => "Jrrp";
 
-    protected override string? ReloadMsg => "[jrrp] config reload successfully!\n";
-
     public Dictionary<long, JrrpContent> Jrrps { get; set; } = [];
 
     public JrrpContent? GetJrrp(long userid)
