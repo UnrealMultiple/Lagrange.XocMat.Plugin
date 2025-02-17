@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <OutputPath>..\out\$(MSBuildProjectName)</OutputPath>
+        <OutputPath>..\..\out\$(MSBuildProjectName)</OutputPath>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     </PropertyGroup>

@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\template.targets" />
+	<Import Project="..\..\template.targets" />
 
   <ItemGroup>
     <PackageReference Include="Octokit" Version="14.0.0" />
