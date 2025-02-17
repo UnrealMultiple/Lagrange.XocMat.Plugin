@@ -15,22 +15,20 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
         //CommandManager.AddGroupCommand(new("cmd", DisableCommand, "onebot.cmd.utils"));
     }
 
-    private async ValueTask OnCommand(CommandArgs args)
+    private ValueTask OnCommand(CommandArgs args)
     {
         if(Config.Instance.GroupDisabledCommands.TryGetValue(args.EventArgs.Chain.GroupUin!.Value, out CommandBody? commandBody))
         {
             if (commandBody.DisabledCommands.Count > 0 && commandBody.DisabledCommands.Contains(args.Name))
             {
-                await args.EventArgs.Reply("此指令已被禁用");
                 args.Handler = true;
-                return;
             }
             if (commandBody.AllowedCommands.Count > 0 && !commandBody.AllowedCommands.Contains(args.Name))
             {
-                await args.EventArgs.Reply("此指令未被允许");
                 args.Handler = true;
             }
         }
+        return ValueTask.CompletedTask;
     }
 
 
