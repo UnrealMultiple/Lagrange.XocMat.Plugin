@@ -140,7 +140,7 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
                 if (args.Parameters.Count > 1 && int.TryParse(args.Parameters[1], out var num))
                 {
                     var pr = await TShockPluginRepoClient.GetPullRequestNumber(num);
-                    var buffer = await GithubPageUtils.ScreenPage($"{pr.HtmlUrl}/files");
+                    var buffer = await GithubPageUtils.ScreenPage($"{pr.HtmlUrl}/files", "#hide-file-tree-button");
                     await args.MessageBuilder.Image(buffer).Reply();
                 }
                 else

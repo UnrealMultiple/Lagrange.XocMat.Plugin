@@ -5,7 +5,7 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerrariaMap", "TerrariaMap\TerrariaMap.csproj", "{DB85DFBC-B53E-481B-8AD1-0878F3FFD6AC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{CE596F9D-CA6A-4BAC-9BAD-5010FB21DB20}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "File", "File", "{CE596F9D-CA6A-4BAC-9BAD-5010FB21DB20}"
 	ProjectSection(SolutionItems) = preProject
 		template.targets = template.targets
 	EndProjectSection
@@ -25,6 +25,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineReward", "OnlineReward\OnlineReward.csproj", "{25B27A95-B651-4007-AD81-74A107B37785}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHook", "GitHook\GitHook.csproj", "{042C2F4A-760B-4370-A12A-B817525DA6EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeepSeek", "DeepSeek\DeepSeek.csproj", "{A980FC48-DB45-42AD-AF92-89CFE543CD4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +70,10 @@ Global
 		{042C2F4A-760B-4370-A12A-B817525DA6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{042C2F4A-760B-4370-A12A-B817525DA6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{042C2F4A-760B-4370-A12A-B817525DA6EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A980FC48-DB45-42AD-AF92-89CFE543CD4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A980FC48-DB45-42AD-AF92-89CFE543CD4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A980FC48-DB45-42AD-AF92-89CFE543CD4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A980FC48-DB45-42AD-AF92-89CFE543CD4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
