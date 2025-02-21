@@ -6,6 +6,8 @@ namespace DeepSeek;
 
 internal class Utils
 {
+    public static readonly Utils Instance = new();
+
     public DeepSeekClient _client = new(Config.Instance.APIKey);
 
     private readonly ConcurrentDictionary<ulong, ChatRequest> MemberChats = [];

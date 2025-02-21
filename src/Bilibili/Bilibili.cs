@@ -1,18 +1,17 @@
-﻿using Lagrange.Core;
+﻿using System.Text;
+using System.Text.Json.Nodes;
+using Lagrange.Core;
 using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
-using Lagrange.XocMat.Commands;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Plugin;
 using Lagrange.XocMat.Utility;
 using Microsoft.Extensions.Logging;
-using System.Text;
-using System.Text.Json.Nodes;
 
 namespace Bilibili;
 
-public partial class Bilibili(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
+public partial class Bilibili(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 {
     public override string Name => "Bilibili插件";
 
@@ -124,6 +123,7 @@ public partial class Bilibili(ILogger logger, CommandManager commandManager, Bot
         _httpClient = new HttpClient();
         BotContext.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
         Logger.LogInformation("Plugin Bilibili Initiate Successfully!");
+        base.Initialize();
     }
 
     private void Event_OnGroupMessage(BotContext bot, GroupMessageEvent args)
@@ -204,6 +204,6 @@ public partial class Bilibili(ILogger logger, CommandManager commandManager, Bot
             _httpClient.Dispose();
             BotContext.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
         }
-        base.Dispose();
+        base.Dispose(dispose);
     }
 }

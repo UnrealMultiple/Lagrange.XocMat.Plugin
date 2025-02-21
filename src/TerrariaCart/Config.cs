@@ -9,7 +9,7 @@ public class Config : JsonConfigBase<Config>
 {
     protected override string Filename => "Cart";
 
-    public Dictionary<long, Dictionary<string, List<int>>> Carts { get; set; } = new();
+    public Dictionary<long, Dictionary<string, List<int>>> Carts { get; set; } = [];
 
     public void Add(long uin, string cartName, int id)
     {

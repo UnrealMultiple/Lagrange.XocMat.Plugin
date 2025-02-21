@@ -1,4 +1,5 @@
-﻿using Lagrange.XocMat.Extensions;
+﻿using System.Net;
+using Lagrange.XocMat.Extensions;
 using Music.QQ.Enums;
 using Music.QQ.Internal;
 using Music.QQ.Internal.MusicToken;
@@ -8,7 +9,6 @@ using Music.QQ.Internal.Search;
 using Music.QQ.Internal.Search.Song;
 using Music.QQ.Internal.User;
 using Newtonsoft.Json.Linq;
-using System.Net;
 
 namespace Music.QQ;
 
@@ -24,7 +24,7 @@ public class Music_QQ : IDisposable
 
     private TokenInfo Token;
 
-    private System.Timers.Timer timer;
+    private readonly System.Timers.Timer timer;
 
     public event Action<TokenInfo>? TokenUpdated;
 
@@ -68,7 +68,7 @@ public class Music_QQ : IDisposable
     }
 
     public void ChangeToken(TokenInfo token)
-    { 
+    {
         Token = token;
         TokenUpdated?.Invoke(token);
     }

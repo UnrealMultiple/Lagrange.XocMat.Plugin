@@ -1,23 +1,21 @@
 ﻿using Lagrange.Core;
-using Lagrange.XocMat.Commands;
-using Lagrange.XocMat.Extensions;
+using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Plugin;
-using Lagrange.XocMat.Attributes;
 using Microsoft.Extensions.Logging;
 
 namespace CommandUtils;
 
-public class Plugin(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
+public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 {
     public override void Initialize()
     {
-        Lagrange.XocMat.Event.OperatHandler.OnCommand += OnCommand;
-        //CommandManager.AddGroupCommand(new("cmd", DisableCommand, "onebot.cmd.utils"));
+        Lagrange.XocMat.Event.OperatHandler.OnGroupCommand += OnCommand;
+        base.Initialize();
     }
 
-    private ValueTask OnCommand(CommandArgs args)
+    private ValueTask OnCommand(GroupCommandArgs args)
     {
-        if(Config.Instance.GroupDisabledCommands.TryGetValue(args.EventArgs.Chain.GroupUin!.Value, out CommandBody? commandBody))
+        if (Config.Instance.GroupDisabledCommands.TryGetValue(args.Event.Chain.GroupUin!.Value, out CommandBody? commandBody))
         {
             if (commandBody.DisabledCommands.Count > 0 && commandBody.DisabledCommands.Contains(args.Name))
             {
@@ -34,6 +32,7 @@ public class Plugin(ILogger logger, CommandManager commandManager, BotContext bo
 
     protected override void Dispose(bool dispose)
     {
-        Lagrange.XocMat.Event.OperatHandler.OnCommand -= OnCommand;
+        Lagrange.XocMat.Event.OperatHandler.OnGroupCommand -= OnCommand;
+        base.Dispose(dispose);
     }
 }

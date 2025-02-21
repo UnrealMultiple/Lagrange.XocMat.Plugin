@@ -1,22 +1,19 @@
-﻿using Lagrange.Core;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Lagrange.Core;
 using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message.Entity;
 using Lagrange.XocMat;
-using Lagrange.XocMat.Commands;
-using Lagrange.XocMat.Configuration;
 using Lagrange.XocMat.Extensions;
-using Lagrange.XocMat.Permission;
 using Lagrange.XocMat.Plugin;
 using Lagrange.XocMat.Terraria;
 using Lagrange.XocMat.Utility;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace TerrariaMap;
 
-public class TerrariaMap(ILogger logger, CommandManager commandManager, BotContext bot) : XocMatPlugin(logger, commandManager, bot)
+public class TerrariaMap(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 {
     public override string Name => "TerrariaMap";
 
@@ -30,52 +27,34 @@ public class TerrariaMap(ILogger logger, CommandManager commandManager, BotConte
 
     public override void Initialize()
     {
-        CommandManager.AddGroupCommand(new("获取地图", LoadWorld, OneBotPermissions.GenerateMap));
         BotContext.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
+        base.Initialize();
     }
 
     private void Event_OnGroupMessage(BotContext context, GroupMessageEvent e)
     {
-        if (e.Chain.GroupMemberInfo!.Uin != context.BotUin && e.Chain.FirstOrDefault(x => x is FileEntity) is FileEntity file)
+        Task.Factory.StartNew(async () =>
         {
-            if (file.FileSize > 1024 * 1024 * 30)
-                return;
-            if (!string.IsNullOrEmpty(file.FileUrl))
+            if (e.Chain.GroupMemberInfo!.Uin != context.BotUin && e.Chain.FirstOrDefault(x => x is FileEntity) is FileEntity file)
             {
-                var buffer = HttpUtils.HttpGetByte(file.FileUrl).Result;
-                if (TerrariaServer.IsReWorld(buffer))
+                if (file.FileSize > 1024 * 1024 * 30)
+                    return;
+                if (!string.IsNullOrEmpty(file.FileUrl))
                 {
-                    e.Reply("检测到Terraria地图，正在生成.map文件....");
-                    var uuid = Guid.NewGuid().ToString();
-                    Spawn(uuid);
-                    var (name, data) = IPCO.Start(uuid, buffer);
-                    context.GroupFSUpload(e.Chain.GroupUin!.Value, new FileEntity(data, name));
+                    var buffer = HttpUtils.HttpGetByte(file.FileUrl).Result;
+                    if (TerrariaServer.IsReWorld(buffer))
+                    {
+                        await e.Reply("检测到Terraria地图，正在生成.map文件....");
+                        var uuid = Guid.NewGuid().ToString();
+                        Spawn(uuid);
+                        var (name, data) = IPCO.Start(uuid, buffer);
+                        await context.GroupFSUpload(e.Chain.GroupUin!.Value, new FileEntity(data, name));
+                    }
                 }
+
             }
+        });
 
-        }
-    }
-
-
-    private async ValueTask LoadWorld(CommandArgs args)
-    {
-        if (UserLocation.Instance.TryGetServer(args.EventArgs.Chain.GroupMemberInfo!.Uin, args.EventArgs.Chain.GroupUin!.Value, out var server) && server != null)
-        {
-            var file = await server.GetWorldFile();
-            if (file.Status)
-            {
-                await args.Bot.GroupFSUpload(args.EventArgs.Chain.GroupUin!.Value, new FileEntity(file.WorldBuffer, file.WorldName + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".wld"));
-            }
-            else
-            {
-                await args.EventArgs.Reply("无法连接到服务器!");
-            }
-        }
-        else
-        {
-
-            await args.EventArgs.Reply("请切换至一个有效的服务器!");
-        }
     }
 
     private void Spawn(string uuid)
@@ -98,6 +77,6 @@ public class TerrariaMap(ILogger logger, CommandManager commandManager, BotConte
     protected override void Dispose(bool dispose)
     {
         BotContext.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
-        CommandManager.GroupCommandDelegate.RemoveAll(x => x.CallBack == LoadWorld);
+        base.Dispose(dispose);
     }
 }

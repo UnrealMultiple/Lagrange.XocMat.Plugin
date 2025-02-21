@@ -1,8 +1,8 @@
+using System.Security.Cryptography;
+using System.Text;
 using Music.QQ.Internal;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 public class QimeiService
 {

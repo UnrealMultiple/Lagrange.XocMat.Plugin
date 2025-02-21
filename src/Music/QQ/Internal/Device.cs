@@ -1,11 +1,11 @@
+using System.Security.Cryptography;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Security.Cryptography;
 
 namespace Music.QQ.Internal;
 public class Device
 {
-    private static Random random = new();
+    private static readonly Random random = new();
 
     [JsonProperty("display")]
     public string Display { get; set; } = $"QMAPI.{random.Next(100000, 999999)}.001";
@@ -58,7 +58,7 @@ public class Device
     public string MacAddress { get; set; } = "00:50:56:C0:00:08";
 
     [JsonProperty("ip_address")]
-    public List<int> IpAddress { get; } = new List<int> { 10, 0, 1, 3 };
+    public List<int> IpAddress { get; } = [10, 0, 1, 3];
 
     [JsonProperty("wifi_bssid")]
     public string WifiBssid { get; set; } = "00:50:56:C0:00:08";
@@ -126,7 +126,7 @@ public class Device
 
 public class OSVersion
 {
-    private static Random random = new Random();
+    private static readonly Random random = new Random();
 
     [JsonProperty("incremental")]
     public string Incremental { get; set; } = $"QMAPI{random.Next(100000, 999999)}.001";

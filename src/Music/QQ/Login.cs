@@ -1,8 +1,8 @@
-﻿using Music.QQ.Enums;
+﻿using System.Net;
+using Music.QQ.Enums;
 using Music.QQ.Internal;
 using Music.QQ.Internal.MusicToken;
 using Newtonsoft.Json;
-using System.Net;
 
 namespace Music.QQ;
 

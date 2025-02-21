@@ -1,11 +1,10 @@
 ﻿using Octokit;
-using Octokit.Webhooks.Models.PullRequestEvent;
 
 namespace GitHook;
 
 internal class TShockPluginRepoClient
 {
-    private readonly static GitHubClient _client = new(new ProductHeaderValue("XocMat")) { Credentials = new(Config.Instance.Token) };
+    private static readonly GitHubClient _client = new(new ProductHeaderValue("XocMat")) { Credentials = new(Config.Instance.Token) };
 
     public const string Owner = "UnrealMultiple";
 
@@ -50,7 +49,7 @@ internal class TShockPluginRepoClient
     }
 
     public static async Task<Octokit.PullRequest> ClosePullRequest(int id)
-    { 
+    {
         var opt = new PullRequestUpdate() { State = ItemState.Closed };
         return await _client.PullRequest.Update(Owner, Repo, id, opt);
     }

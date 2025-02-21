@@ -1,6 +1,6 @@
-﻿using Lagrange.XocMat.Configuration;
+﻿using Lagrange.XocMat.Attributes;
+using Lagrange.XocMat.Configuration;
 using Newtonsoft.Json;
-using Lagrange.XocMat.Attributes;
 
 namespace CommandUtils;
 

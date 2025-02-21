@@ -1,7 +1,7 @@
 ﻿
+using System.Text;
 using Music.QQ.Internal.Search.Song;
 using Music.WangYi;
-using System.Text;
 
 namespace Music;
 
