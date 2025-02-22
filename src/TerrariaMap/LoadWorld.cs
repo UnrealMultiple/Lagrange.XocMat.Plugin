@@ -1,4 +1,4 @@
-using Lagrange.Core.Common.Interface.Api;
+ï»¿using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Message.Entity;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
@@ -10,8 +10,8 @@ namespace TerrariaMap;
 
 public class LoadWorld : Command
 {
-    public override string HelpText => "»ñÈ¡TerrariaµØÍ¼";
-    public override string[] Alias => ["»ñÈ¡µØÍ¼"];
+    public override string HelpText => "è·å–Terrariaåœ°å›¾";
+    public override string[] Alias => ["è·å–åœ°å›¾"];
     public override string[] Permissions => [OneBotPermissions.GenerateMap];
 
     public override async Task InvokeAsync(GroupCommandArgs args)
@@ -25,12 +25,12 @@ public class LoadWorld : Command
             }
             else
             {
-                await args.Event.Reply("ÎŞ·¨Á¬½Óµ½·şÎñÆ÷!");
+                await args.Event.Reply("æ— æ³•è¿æ¥åˆ°æœåŠ¡å™¨!");
             }
         }
         else
         {
-            await args.Event.Reply("ÇëÇĞ»»ÖÁÒ»¸öÓĞĞ§µÄ·şÎñÆ÷!");
+            await args.Event.Reply("è¯·åˆ‡æ¢è‡³ä¸€ä¸ªæœ‰æ•ˆçš„æœåŠ¡å™¨!");
         }
     }
 }

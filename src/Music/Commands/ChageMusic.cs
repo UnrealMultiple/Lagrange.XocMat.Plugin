@@ -1,4 +1,4 @@
-using Lagrange.Core.Message;
+ï»¿using Lagrange.Core.Message;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
@@ -9,8 +9,8 @@ namespace Music.Commands;
 
 public class ChageMusic : Command
 {
-    public override string HelpText => "Ñ¡¸è";
-    public override string[] Alias => ["Ñ¡"];
+    public override string HelpText => "é€‰æ­Œ";
+    public override string[] Alias => ["é€‰"];
     public override string[] Permissions => [OneBotPermissions.Music];
 
     public override async Task InvokeAsync(GroupCommandArgs args)
@@ -54,17 +54,17 @@ public class ChageMusic : Command
                 }
                 else
                 {
-                    await args.Event.Reply("ÇëÊäÈëÒ»¸öÕıÈ·µÄĞòºÅ!");
+                    await args.Event.Reply("è¯·è¾“å…¥ä¸€ä¸ªæ­£ç¡®çš„åºå·!");
                 }
             }
             else
             {
-                await args.Event.Reply("ÇëÏÈµã¸è!");
+                await args.Event.Reply("è¯·å…ˆç‚¹æ­Œ!");
             }
         }
         else
         {
-            await args.Event.Reply("ÇëÊäÈëÒ»¸öÕıÈ·µÄĞòºÅ!");
+            await args.Event.Reply("è¯·è¾“å…¥ä¸€ä¸ªæ­£ç¡®çš„åºå·!");
         }
     }
 }

@@ -1,4 +1,4 @@
-using Lagrange.XocMat.Command;
+ï»¿using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Internal;
@@ -7,27 +7,27 @@ namespace Music.Commands;
 
 public class ChangeMusicSource : Command
 {
-    public override string HelpText => "ÇĞ»»ÒôÀÖÔ´";
-    public override string[] Alias => ["ÇĞ»»ÒôÔ´"];
+    public override string HelpText => "åˆ‡æ¢éŸ³ä¹æº";
+    public override string[] Alias => ["åˆ‡æ¢éŸ³æº"];
     public override string[] Permissions => [OneBotPermissions.Music];
 
     public override async Task InvokeAsync(GroupCommandArgs args)
     {
         if (args.Parameters.Count > 0)
         {
-            if (args.Parameters[0] == "QQ" || args.Parameters[0] == "ÍøÒ×")
+            if (args.Parameters[0] == "QQ" || args.Parameters[0] == "ç½‘æ˜“")
             {
                 MusicTool.ChangeLocal(args.Parameters[0], args.Event.Chain.GroupMemberInfo!.Uin);
-                await args.Event.Reply($"ÒôÔ´ÒÑÇĞ»»ÖÁ{args.Parameters[0]}");
+                await args.Event.Reply($"éŸ³æºå·²åˆ‡æ¢è‡³{args.Parameters[0]}");
             }
             else
             {
-                await args.Event.Reply("ÇëÊäÈëÕıÈ·µÄÒôÔ´!");
+                await args.Event.Reply("è¯·è¾“å…¥æ­£ç¡®çš„éŸ³æº!");
             }
         }
         else
         {
-            await args.Event.Reply("ÇëÊäÈëÕıÈ·µÄÒôÔ´!");
+            await args.Event.Reply("è¯·è¾“å…¥æ­£ç¡®çš„éŸ³æº!");
         }
     }
 }

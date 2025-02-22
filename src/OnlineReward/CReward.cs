@@ -1,4 +1,4 @@
-using System.Text;
+ï»¿using System.Text;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Configuration;
@@ -9,8 +9,8 @@ namespace OnlineReward;
 
 public class CReward : Command
 {
-    public override string HelpText => "ÁìÈ¡ÔÚÏßÊ±³¤½±Àø";
-    public override string[] Alias => ["ÁìÈ¡ÔÚÏß½±Àø"];
+    public override string HelpText => "é¢†å–åœ¨çº¿æ—¶é•¿å¥–åŠ±";
+    public override string[] Alias => ["é¢†å–åœ¨çº¿å¥–åŠ±"];
     public override string[] Permissions => ["onebot.online.reward"];
 
     public override async Task InvokeAsync(GroupCommandArgs args)
@@ -20,7 +20,7 @@ public class CReward : Command
             var user = TerrariaUser.GetUserById(args.MemberUin, server.Name);
             if (user.Count == 0)
             {
-                await args.Event.Reply("Î´ÕÒµ½×¢²áµÄÕË»§", true);
+                await args.Event.Reply("æœªæ‰¾åˆ°æ³¨å†Œçš„è´¦æˆ·", true);
                 return;
             }
             var online = await server.OnlineRank();
@@ -39,17 +39,17 @@ public class CReward : Command
                     if (ntime > 0)
                     {
                         Config.Instance.Reward[u.Name] = time;
-                        sb.AppendLine($"½ÇÉ«: {u.Name}ÔÚÏßÊ±³¤{time}Ãë,±¾´ÎÁìÈ¡{ntime}Ãë½±Àø£¬¹²{ntime * Config.Instance.TimeRate}¸öĞÇ±Ò!");
+                        sb.AppendLine($"è§’è‰²: {u.Name}åœ¨çº¿æ—¶é•¿{time}ç§’,æœ¬æ¬¡é¢†å–{ntime}ç§’å¥–åŠ±ï¼Œå…±{ntime * Config.Instance.TimeRate}ä¸ªæ˜Ÿå¸!");
                         Currency.Add(args.MemberUin, ntime * Config.Instance.TimeRate);
                     }
                     else
                     {
-                        sb.AppendLine($"½ÇÉ«: {u.Name}ÒòÔÚÏßÊ±³¤²»×ãÎŞ·¨ÁìÈ¡");
+                        sb.AppendLine($"è§’è‰²: {u.Name}å› åœ¨çº¿æ—¶é•¿ä¸è¶³æ— æ³•é¢†å–");
                     }
                 }
                 else
                 {
-                    sb.AppendLine($"½ÇÉ«: {u.Name}ÒòÔÚÏßÊ±³¤²»×ãÎŞ·¨ÁìÈ¡");
+                    sb.AppendLine($"è§’è‰²: {u.Name}å› åœ¨çº¿æ—¶é•¿ä¸è¶³æ— æ³•é¢†å–");
                 }
             }
             await args.Event.Reply(sb.ToString().Trim());
@@ -57,7 +57,7 @@ public class CReward : Command
         }
         else
         {
-            await args.Event.Reply("ÇëÇĞ»»ÖÁÒ»¸öÓĞĞ§µÄ·şÎñÆ÷!", true);
+            await args.Event.Reply("è¯·åˆ‡æ¢è‡³ä¸€ä¸ªæœ‰æ•ˆçš„æœåŠ¡å™¨!", true);
             return;
         }
     }

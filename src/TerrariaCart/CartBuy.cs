@@ -1,4 +1,4 @@
-using System.Drawing;
+ï»¿using System.Drawing;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.DB.Manager;
@@ -15,8 +15,8 @@ public class CartBuy : Command
         _config = new Config();
     }
 
-    public override string HelpText => "½áËã¹ºÎï³µ";
-    public override string[] Alias => ["½áËã"];
+    public override string HelpText => "ç»“ç®—è´­ç‰©è½¦";
+    public override string[] Alias => ["ç»“ç®—"];
     public override string[] Permissions => [OneBotPermissions.TerrariaShop];
 
     public override async Task InvokeAsync(ServerCommandArgs args)
@@ -24,12 +24,12 @@ public class CartBuy : Command
         if (args.Server == null) return;
         if (args.Parameters.Count != 1)
         {
-            await args.Server.PrivateMsg(args.UserName, $"Óï·¨´íÎó:\nÕıÈ·Óï·¨:/½áËã [¹ºÎï³µ]", Color.GreenYellow);
+            await args.Server.PrivateMsg(args.UserName, $"è¯­æ³•é”™è¯¯:\næ­£ç¡®è¯­æ³•:/ç»“ç®— [è´­ç‰©è½¦]", Color.GreenYellow);
             return;
         }
         if (!args.Server.EnabledShop)
         {
-            await args.Server.PrivateMsg(args.UserName, "·şÎñÆ÷Î´¿ªÆôÉÌµêÏµÍ³£¡", Color.DarkRed);
+            await args.Server.PrivateMsg(args.UserName, "æœåŠ¡å™¨æœªå¼€å¯å•†åº—ç³»ç»Ÿï¼", Color.DarkRed);
             return;
         }
         if (args.User != null)
@@ -39,7 +39,7 @@ public class CartBuy : Command
                 var carts = _config.GetCartShop(args.Account.UserId, args.Parameters[0]);
                 if (carts.Count == 0)
                 {
-                    await args.Server.PrivateMsg(args.UserName, "¹ºÎï³µÖĞ²»´æÔÚÎïÆ·!", Color.DarkRed);
+                    await args.Server.PrivateMsg(args.UserName, "è´­ç‰©è½¦ä¸­ä¸å­˜åœ¨ç‰©å“!", Color.DarkRed);
                     return;
                 }
                 var all = carts.Sum(x => x.Price);
@@ -50,11 +50,11 @@ public class CartBuy : Command
                     {
                         var res = await args.Server.Command($"/g {shop.ID} {args.Name} {shop.Num}");
                     }
-                    await args.Server.PrivateMsg(args.UserName, "½áËã³É¹¦!", Color.GreenYellow);
+                    await args.Server.PrivateMsg(args.UserName, "ç»“ç®—æˆåŠŸ!", Color.GreenYellow);
                 }
                 else
                 {
-                    await args.Server.PrivateMsg(args.UserName, "ĞÇ±Ò²»×ã!", Color.GreenYellow);
+                    await args.Server.PrivateMsg(args.UserName, "æ˜Ÿå¸ä¸è¶³!", Color.GreenYellow);
                 }
             }
             catch (Exception e)

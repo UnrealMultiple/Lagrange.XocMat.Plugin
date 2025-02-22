@@ -1,4 +1,4 @@
-using System.Text;
+ï»¿using System.Text;
 using Lagrange.Core.Message;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
@@ -11,7 +11,7 @@ namespace TerrariaCart;
 public class CartManager : Command
 {
 
-    public override string HelpText => "¹ÜÀí¹ºÎï³µ";
+    public override string HelpText => "ç®¡ç†è´­ç‰©è½¦";
     public override string[] Alias => ["cart"];
     public override string[] Permissions => [OneBotPermissions.TerrariaShop];
 
@@ -24,11 +24,11 @@ public class CartManager : Command
                 if (int.TryParse(args.Parameters[2], out int id))
                 {
                     Config.Instance.Add(args.Event.Chain.GroupMemberInfo!.Uin, args.Parameters[1], id);
-                    await args.Event.Reply("Ìí¼Ó³É¹¦!", true);
+                    await args.Event.Reply("æ·»åŠ æˆåŠŸ!", true);
                 }
                 else
                 {
-                    await args.Event.Reply("ÇëÌîĞ´Ò»¸öÕıÈ·µÄÉÌÆ·ID!", true);
+                    await args.Event.Reply("è¯·å¡«å†™ä¸€ä¸ªæ­£ç¡®çš„å•†å“ID!", true);
                 }
             }
             else if (args.Parameters.Count == 3 && args.Parameters[0].ToLower() == "del")
@@ -36,24 +36,24 @@ public class CartManager : Command
                 if (int.TryParse(args.Parameters[2], out int id))
                 {
                     Config.Instance.Remove(args.Event.Chain.GroupMemberInfo!.Uin, args.Parameters[1], id);
-                    await args.Event.Reply("É¾³ı³É¹¦!", true);
+                    await args.Event.Reply("åˆ é™¤æˆåŠŸ!", true);
                 }
                 else
                 {
-                    await args.Event.Reply("ÇëÌîĞ´Ò»¸öÕıÈ·µÄÉÌÆ·ID!", true);
+                    await args.Event.Reply("è¯·å¡«å†™ä¸€ä¸ªæ­£ç¡®çš„å•†å“ID!", true);
                 }
             }
             else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "clear")
             {
                 Config.Instance.ClearCart(args.Event.Chain.GroupMemberInfo!.Uin, args.Parameters[1]);
-                await args.Event.Reply("ÒÑÇå³ı¹ºÎï³µ" + args.Parameters[1]);
+                await args.Event.Reply("å·²æ¸…é™¤è´­ç‰©è½¦" + args.Parameters[1]);
             }
             else if (args.Parameters.Count == 1 && args.Parameters[0].ToLower() == "list")
             {
                 var carts = Config.Instance.GetCarts(args.Event.Chain.GroupMemberInfo!.Uin);
                 if (carts.Count == 0)
                 {
-                    await args.Event.Reply("¹ºÎï³µ¿Õ¿ÕÈçÒ²!", true);
+                    await args.Event.Reply("è´­ç‰©è½¦ç©ºç©ºå¦‚ä¹Ÿ!", true);
                     return;
                 }
                 var sb = new StringBuilder();
@@ -63,9 +63,9 @@ public class CartManager : Command
                 foreach (var (name, shops) in carts)
                 {
                     sb.AppendLine();
-                    sb.AppendLine($"# ¹ºÎï³µ`{name}`");
+                    sb.AppendLine($"# è´­ç‰©è½¦`{name}`");
                     sb.AppendLine();
-                    sb.AppendLine("|ÉÌÆ·ID|ÉÌÆ·Ãû³Æ|ÊıÁ¿|¼Û¸ñ|");
+                    sb.AppendLine("|å•†å“ID|å•†å“åç§°|æ•°é‡|ä»·æ ¼|");
                     sb.AppendLine("|:--:|:--:|:--:|:--:|");
                     foreach (var index in shops)
                     {
@@ -82,10 +82,10 @@ public class CartManager : Command
             }
             else
             {
-                await args.Event.Reply("Óï·¨´íÎó,ÕıÈ·Óï·¨\n" +
-                    $"{args.CommamdPrefix}{args.Name} add [¹ºÎï³µ] [ÉÌÆ·ID]\n" +
-                    $"{args.CommamdPrefix}{args.Name} del [¹ºÎï³µ] [ÉÌÆ·ID]\n" +
-                    $"{args.CommamdPrefix}{args.Name} clear [¹ºÎï³µ]\n" +
+                await args.Event.Reply("è¯­æ³•é”™è¯¯,æ­£ç¡®è¯­æ³•\n" +
+                    $"{args.CommamdPrefix}{args.Name} add [è´­ç‰©è½¦] [å•†å“ID]\n" +
+                    $"{args.CommamdPrefix}{args.Name} del [è´­ç‰©è½¦] [å•†å“ID]\n" +
+                    $"{args.CommamdPrefix}{args.Name} clear [è´­ç‰©è½¦]\n" +
                     $"{args.CommamdPrefix}{args.Name} list");
             }
         }

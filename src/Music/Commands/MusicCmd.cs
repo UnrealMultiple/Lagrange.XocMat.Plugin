@@ -1,4 +1,4 @@
-using Lagrange.Core.Message;
+ï»¿using Lagrange.Core.Message;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
@@ -8,8 +8,8 @@ namespace Music.Commands;
 
 public class MusicCmd : Command
 {
-    public override string HelpText => "µã¸è";
-    public override string[] Alias => ["µã¸è"];
+    public override string HelpText => "ç‚¹æ­Œ";
+    public override string[] Alias => ["ç‚¹æ­Œ"];
     public override string[] Permissions => [OneBotPermissions.Music];
 
     public override async Task InvokeAsync(GroupCommandArgs args)
@@ -17,17 +17,17 @@ public class MusicCmd : Command
         if (args.Parameters.Count > 0)
         {
             var musicName = string.Join(" ", args.Parameters);
-            if (args.Parameters[0] == "ÍøÒ×")
+            if (args.Parameters[0] == "ç½‘æ˜“")
             {
                 if (args.Parameters.Count > 1)
                 {
                     await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MarkdownImage(await MusicTool.GetMusic163Markdown(musicName[2..])));
                     MusicTool.ChangeName(musicName[2..], args.Event.Chain.GroupMemberInfo!.Uin);
-                    MusicTool.ChangeLocal("ÍøÒ×", args.Event.Chain.GroupMemberInfo!.Uin);
+                    MusicTool.ChangeLocal("ç½‘æ˜“", args.Event.Chain.GroupMemberInfo!.Uin);
                 }
                 else
                 {
-                    await args.Event.Reply("ÇëÊäÈëÒ»¸ö¸èÃû!");
+                    await args.Event.Reply("è¯·è¾“å…¥ä¸€ä¸ªæ­Œå!");
                 }
             }
             else if (args.Parameters[0] == "QQ")
@@ -40,13 +40,13 @@ public class MusicCmd : Command
                 }
                 else
                 {
-                    await args.Event.Reply("ÇëÊäÈëÒ»¸ö¸èÃû!");
+                    await args.Event.Reply("è¯·è¾“å…¥ä¸€ä¸ªæ­Œå!");
                 }
             }
             else
             {
                 var type = MusicTool.GetLocal(args.Event.Chain.GroupMemberInfo!.Uin);
-                if (type == "ÍøÒ×")
+                if (type == "ç½‘æ˜“")
                 {
                     try
                     {
@@ -67,7 +67,7 @@ public class MusicCmd : Command
         }
         else
         {
-            await args.Event.Reply("ÇëÊäÈëÒ»¸ö¸èÃû!");
+            await args.Event.Reply("è¯·è¾“å…¥ä¸€ä¸ªæ­Œå!");
         }
     }
 }

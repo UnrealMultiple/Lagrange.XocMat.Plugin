@@ -1,4 +1,4 @@
-using System.Text;
+ï»¿using System.Text;
 using Lagrange.Core.Message;
 using Lagrange.XocMat;
 using Lagrange.XocMat.Command;
@@ -9,7 +9,7 @@ namespace PluginManager;
 
 public class PManager : Command
 {
-    public override string HelpText => "²å¼þ¹ÜÀí";
+    public override string HelpText => "æ’ä»¶ç®¡ç†";
     public override string[] Alias => ["pm"];
     public override string[] Permissions => ["onebot.plugin.admin"];
 
@@ -22,9 +22,9 @@ public class PManager : Command
             sb.AppendLine();
             sb.AppendLine();
             sb.AppendLine();
-            sb.AppendLine($"# ²å¼þÁÐ±í");
+            sb.AppendLine($"# æ’ä»¶åˆ—è¡¨");
             sb.AppendLine();
-            sb.AppendLine("|ÐòºÅ|²å¼þÃû³Æ|²å¼þ×÷Õß|²å¼þËµÃ÷|²å¼þ°æ±¾|ÆôÓÃ|");
+            sb.AppendLine("|åºå·|æ’ä»¶åç§°|æ’ä»¶ä½œè€…|æ’ä»¶è¯´æ˜Ž|æ’ä»¶ç‰ˆæœ¬|å¯ç”¨|");
             sb.AppendLine("|:--:|:--:|:--:|:--:|:--:|:--:|");
             int index = 1;
             foreach (var plugin in XocMatAPI.PluginLoader.PluginContext.Plugins)
@@ -41,46 +41,46 @@ public class PManager : Command
         {
             if (!int.TryParse(args.Parameters[1], out var index) || index < 1 || index > XocMatAPI.PluginLoader.PluginContext.Plugins.Count)
             {
-                await args.Event.Reply("ÇëÊäÈëÒ»¸öÕýÈ·µÄÐòºÅ!", true);
+                await args.Event.Reply("è¯·è¾“å…¥ä¸€ä¸ªæ­£ç¡®çš„åºå·!", true);
                 return;
             }
             var instance = XocMatAPI.PluginLoader.PluginContext.Plugins[index - 1];
             if (!instance.Initialized)
             {
-                await args.Event.Reply("´Ë²å¼þÒÑ¾­±»Ð¶ÔØ£¬ÎÞÐèÖØ¸´Ð¶ÔØ!!", true);
+                await args.Event.Reply("æ­¤æ’ä»¶å·²ç»è¢«å¸è½½ï¼Œæ— éœ€é‡å¤å¸è½½!!", true);
                 return;
             }
             instance.DeInitialize();
-            await args.Event.Reply($"{instance.Plugin.Name} ²å¼þÐ¶ÔØ³É¹¦!", true);
+            await args.Event.Reply($"{instance.Plugin.Name} æ’ä»¶å¸è½½æˆåŠŸ!", true);
         }
         else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "on")
         {
             if (!int.TryParse(args.Parameters[1], out var index) || index < 1 || index > XocMatAPI.PluginLoader.PluginContext.Plugins.Count)
             {
-                await args.Event.Reply("ÇëÊäÈëÒ»¸öÕýÈ·µÄÐòºÅ!", true);
+                await args.Event.Reply("è¯·è¾“å…¥ä¸€ä¸ªæ­£ç¡®çš„åºå·!", true);
                 return;
             }
             var instance = XocMatAPI.PluginLoader.PluginContext.Plugins[index - 1];
             if (instance.Initialized)
             {
-                await args.Event.Reply("´Ë²å¼þÒÑ¾­±»ÆôÓÃ£¬ÎÞÐèÖØ¸´ÆôÓÃ!!", true);
+                await args.Event.Reply("æ­¤æ’ä»¶å·²ç»è¢«å¯ç”¨ï¼Œæ— éœ€é‡å¤å¯ç”¨!!", true);
                 return;
             }
             instance.Initialize();
-            await args.Event.Reply($"{instance.Plugin.Name} ²å¼þ¼ÓÔØ³É¹¦!", true);
+            await args.Event.Reply($"{instance.Plugin.Name} æ’ä»¶åŠ è½½æˆåŠŸ!", true);
         }
         else if (args.Parameters.Count == 1 && args.Parameters[0].ToLower() == "reload")
         {
             XocMatAPI.PluginLoader.UnLoad();
             XocMatAPI.PluginLoader.Load();
-            await args.Event.Reply("²å¼þÁÐ±íÒÑ¾­ÖØÐÂ¼ÓÔØ!", true);
+            await args.Event.Reply("æ’ä»¶åˆ—è¡¨å·²ç»é‡æ–°åŠ è½½!", true);
         }
         else
         {
-            await args.Event.Reply("Óï·¨´íÎó,ÕýÈ·Óï·¨:\n" +
+            await args.Event.Reply("è¯­æ³•é”™è¯¯,æ­£ç¡®è¯­æ³•:\n" +
                 $"{args.CommamdPrefix}{args.Name} list" +
-                $"{args.CommamdPrefix}{args.Name} off [ÐòºÅ]" +
-                $"{args.CommamdPrefix}{args.Name} on [ÐòºÅ]");
+                $"{args.CommamdPrefix}{args.Name} off [åºå·]" +
+                $"{args.CommamdPrefix}{args.Name} on [åºå·]");
         }
     }
 }

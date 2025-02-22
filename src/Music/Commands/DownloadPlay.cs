@@ -1,4 +1,4 @@
-using Lagrange.Core.Common.Interface.Api;
+锘縰sing Lagrange.Core.Common.Interface.Api;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
@@ -9,8 +9,8 @@ namespace Music.Commands;
 
 public class DownloadPlay : Command
 {
-    public override string HelpText => "下载歌单";
-    public override string[] Alias => ["下载歌单"];
+    public override string HelpText => "涓嬭浇姝屽崟";
+    public override string[] Alias => ["涓嬭浇姝屽崟"];
     public override string[] Permissions => [OneBotPermissions.Music];
 
     public override async Task InvokeAsync(GroupCommandArgs args)
@@ -19,15 +19,15 @@ public class DownloadPlay : Command
         {
             try
             {
-                await args.Event.Reply("正在下载歌单中的歌曲...");
+                await args.Event.Reply("姝ｅ湪涓嬭浇姝屽崟涓殑姝屾洸...");
                 var source = MusicTool.GetLocal(args.Event.Chain.GroupMemberInfo!.Uin);
                 var buffer = source switch
                 {
                     "QQ" => await Config.Instance.MusicQQ.DownloadPlaylists(id),
-                    "网易" => await Music_163.DownloadPlaylists(id),
-                    _ => throw new("未知的音乐源")
+                    "缃戞槗" => await Music_163.DownloadPlaylists(id),
+                    _ => throw new("鏈煡鐨勯煶涔愭簮")
                 };
-                await args.Bot.GroupFSUpload(args.Event.Chain.GroupUin!.Value, new(buffer, $"{source}歌单[{id}].zip"));
+                await args.Bot.GroupFSUpload(args.Event.Chain.GroupUin!.Value, new(buffer, $"{source}姝屽崟[{id}].zip"));
             }
             catch (Exception ex)
             {
@@ -36,7 +36,7 @@ public class DownloadPlay : Command
         }
         else
         {
-            await args.Event.Reply("请输入一个正确的歌单ID!");
+            await args.Event.Reply("璇疯緭鍏ヤ竴涓纭殑姝屽崟ID!");
         }
     }
 }
