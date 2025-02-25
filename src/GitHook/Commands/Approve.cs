@@ -9,7 +9,7 @@ public class Approve : Command
 {
     public override string[] Alias => ["approve"];
     public override string HelpText => "Approve a pull request";
-    public override string[] Permissions => ["onebot.pr"];
+    public override string[] Permissions => ["onebot.approve"];
     public override async Task InvokeAsync(GroupCommandArgs args)
     {
         if (args.Parameters.Count >= 1 && int.TryParse(args.Parameters[0], out var num))
