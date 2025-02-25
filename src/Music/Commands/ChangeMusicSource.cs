@@ -2,6 +2,7 @@
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace Music.Commands;
 
@@ -11,7 +12,7 @@ public class ChangeMusicSource : Command
     public override string[] Alias => ["切换音源"];
     public override string[] Permissions => [OneBotPermissions.Music];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         if (args.Parameters.Count > 0)
         {

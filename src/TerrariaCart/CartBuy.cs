@@ -3,6 +3,7 @@ using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.DB.Manager;
 using Lagrange.XocMat.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace TerrariaCart;
 
@@ -19,7 +20,7 @@ public class CartBuy : Command
     public override string[] Alias => ["结算"];
     public override string[] Permissions => [OneBotPermissions.TerrariaShop];
 
-    public override async Task InvokeAsync(ServerCommandArgs args)
+    public override async Task InvokeAsync(ServerCommandArgs args, ILogger log)
     {
         if (args.Server == null) return;
         if (args.Parameters.Count != 1)

@@ -4,6 +4,7 @@ using Lagrange.XocMat.Configuration;
 using Lagrange.XocMat.DB.Manager;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Utility;
+using Microsoft.Extensions.Logging;
 
 namespace BindTSplayer;
 
@@ -17,7 +18,7 @@ public class BindPlayer : Command
 
     private readonly Dictionary<long, List<Tuple<string, string>>> _temp = [];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         if (!UserLocation.Instance.TryGetServer(args.Event.Chain.GroupMemberInfo!.Uin, args.Event.Chain.GroupUin!.Value, out var server) || server == null)
         {

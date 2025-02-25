@@ -4,6 +4,7 @@ using Lagrange.XocMat;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace PluginManager;
 
@@ -13,7 +14,7 @@ public class PManager : Command
     public override string[] Alias => ["pm"];
     public override string[] Permissions => ["onebot.plugin.admin"];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         if (args.Parameters.Count == 1 && args.Parameters[0].Equals("list", StringComparison.CurrentCultureIgnoreCase))
         {

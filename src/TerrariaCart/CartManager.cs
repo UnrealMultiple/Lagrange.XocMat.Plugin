@@ -5,6 +5,7 @@ using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Configuration;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace TerrariaCart;
 
@@ -15,7 +16,7 @@ public class CartManager : Command
     public override string[] Alias => ["cart"];
     public override string[] Permissions => [OneBotPermissions.TerrariaShop];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         try
         {

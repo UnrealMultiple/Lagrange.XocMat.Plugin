@@ -2,6 +2,7 @@
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
+using Microsoft.Extensions.Logging;
 using Octokit;
 
 namespace GitHook.Commands;
@@ -11,7 +12,7 @@ public class IssueManager : Command
     public override string[] Alias => ["issue", "issues"];
     public override string HelpText => "issue";
     public override string[] Permissions => ["onebot.aichat.issue"];
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         if (args.Parameters.Count < 1)
         {

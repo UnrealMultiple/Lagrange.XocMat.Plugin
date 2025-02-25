@@ -4,6 +4,7 @@ using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Utility;
+using Microsoft.Extensions.Logging;
 
 namespace Disorder.Commands;
 
@@ -14,7 +15,7 @@ public class Fellow : Command
     public override string[] Permissions => ["onebot.fellow"];
 
     private const string FellowUrl = "https://oiapi.net/API/CPUni/";
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         var w = FollowConfig.Instance.GetFollow(args.Event.Chain.GroupMemberInfo!.Uin);
         long targerid = 0;

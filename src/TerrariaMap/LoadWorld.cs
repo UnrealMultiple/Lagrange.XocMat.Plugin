@@ -5,6 +5,7 @@ using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Configuration;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace TerrariaMap;
 
@@ -14,7 +15,7 @@ public class LoadWorld : Command
     public override string[] Alias => ["获取地图"];
     public override string[] Permissions => [OneBotPermissions.GenerateMap];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         if (UserLocation.Instance.TryGetServer(args.MemberUin, args.GroupUin, out var server) && server != null)
         {

@@ -2,6 +2,7 @@
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
+using Microsoft.Extensions.Logging;
 using Music.QQ;
 
 namespace Music.Commands;
@@ -12,7 +13,7 @@ public class QrCodeLogin : Command
     public override string[] Alias => ["音乐扫码"];
     public override string[] Permissions => ["onebot.music.qrcode"];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         try
         {

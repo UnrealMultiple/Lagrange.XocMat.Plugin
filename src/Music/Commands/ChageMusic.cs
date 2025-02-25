@@ -4,6 +4,7 @@ using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Internal;
 using Lagrange.XocMat.Utility;
+using Microsoft.Extensions.Logging;
 
 namespace Music.Commands;
 
@@ -13,7 +14,7 @@ public class ChageMusic : Command
     public override string[] Alias => ["选"];
     public override string[] Permissions => [OneBotPermissions.Music];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         if (args.Parameters.Count > 0)
         {

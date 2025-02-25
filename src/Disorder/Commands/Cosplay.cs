@@ -4,6 +4,7 @@ using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Utility;
+using Microsoft.Extensions.Logging;
 
 namespace Disorder.Commands;
 
@@ -17,7 +18,7 @@ public class Cosplay : Command
 
     private const string CosUrl = "https://imgapi.cn/cos2.php?return=jsonpro";
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         var res = await HttpUtils.HttpGetString(CosUrl);
         var json = JsonNode.Parse(res);

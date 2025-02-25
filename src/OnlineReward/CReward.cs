@@ -4,6 +4,7 @@ using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Configuration;
 using Lagrange.XocMat.DB.Manager;
 using Lagrange.XocMat.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace OnlineReward;
 
@@ -13,7 +14,7 @@ public class CReward : Command
     public override string[] Alias => ["领取在线奖励"];
     public override string[] Permissions => ["onebot.online.reward"];
 
-    public override async Task InvokeAsync(GroupCommandArgs args)
+    public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         if (UserLocation.Instance.TryGetServer(args.MemberUin, args.GroupUin, out var server) && server != null)
         {
