@@ -12,7 +12,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 
     public override string Author => "少司命";
 
-    public override Version Version => new(1, 0, 0, 0);
+    public override Version Version => new(1, 0, 0, 1);
 
     public override void Initialize()
     {
