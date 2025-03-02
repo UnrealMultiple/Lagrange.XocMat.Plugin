@@ -118,12 +118,10 @@ public partial class Bilibili(ILogger logger, BotContext bot) : XocMatPlugin(log
         return builder;
     }
 
-    public override void Initialize()
+    protected override void Initialize()
     {
         _httpClient = new HttpClient();
         BotContext.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
-        Logger.LogInformation("Plugin Bilibili Initiate Successfully!");
-        base.Initialize();
     }
 
     private void Event_OnGroupMessage(BotContext bot, GroupMessageEvent args)
@@ -204,6 +202,5 @@ public partial class Bilibili(ILogger logger, BotContext bot) : XocMatPlugin(log
             _httpClient.Dispose();
             BotContext.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
         }
-        base.Dispose(dispose);
     }
 }

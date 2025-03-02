@@ -4,6 +4,7 @@ using Lagrange.XocMat;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
+using Lagrange.XocMat.Utility.Images;
 using Microsoft.Extensions.Logging;
 
 namespace PluginManager;
@@ -18,25 +19,17 @@ public class PManager : Command
     {
         if (args.Parameters.Count == 1 && args.Parameters[0].Equals("list", StringComparison.CurrentCultureIgnoreCase))
         {
-            var sb = new StringBuilder();
-            sb.AppendLine($$"""<div align="center">""");
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine($"# 插件列表");
-            sb.AppendLine();
-            sb.AppendLine("|序号|插件名称|插件作者|插件说明|插件版本|启用|");
-            sb.AppendLine("|:--:|:--:|:--:|:--:|:--:|:--:|");
+            var tableBuilder = new TableBuilder()
+                .SetTitle("插件列表")
+                .AddRow("序号", "插件名称", "插件作者", "插件说明", "插件版本", "启用");
             int index = 1;
             foreach (var plugin in XocMatAPI.PluginLoader.PluginContext.Plugins)
             {
-                sb.AppendLine($"|{index}|{plugin.Plugin.Name}|{plugin.Plugin.Author}|{plugin.Plugin.Description}|{plugin.Plugin.Version}|{plugin.Initialized}|");
+                tableBuilder.AddRow(index.ToString(), plugin.Plugin.Name, plugin.Plugin.Author, plugin.Plugin.Description, plugin.Plugin.Version.ToString(), plugin.Initialized.ToString());
                 index++;
             }
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine("</div>");
-            await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MarkdownImage(sb.ToString()));
+            
+            await args.MessageBuilder.Image(await tableBuilder.BuildAsync()).Reply();
         }
         else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "off")
         {

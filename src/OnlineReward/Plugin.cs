@@ -16,10 +16,9 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 
     public override Version Version => new(1, 0, 0, 0);
 
-    public override void Initialize()
+    protected override void Initialize()
     {
         OperatHandler.OnGroupCommand += OperatHandler_OnCommand;
-        base.Initialize();
     }
 
 
@@ -35,6 +34,5 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     protected override void Dispose(bool dispose)
     {
         OperatHandler.OnGroupCommand -= OperatHandler_OnCommand;
-        base.Dispose(dispose);
     }
 }

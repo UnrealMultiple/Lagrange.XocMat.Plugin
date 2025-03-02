@@ -7,10 +7,9 @@ namespace CommandUtils;
 
 public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 {
-    public override void Initialize()
+    protected override void Initialize()
     {
         Lagrange.XocMat.Event.OperatHandler.OnGroupCommand += OnCommand;
-        base.Initialize();
     }
 
     private ValueTask OnCommand(GroupCommandArgs args)
@@ -33,6 +32,5 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     protected override void Dispose(bool dispose)
     {
         Lagrange.XocMat.Event.OperatHandler.OnGroupCommand -= OnCommand;
-        base.Dispose(dispose);
     }
 }

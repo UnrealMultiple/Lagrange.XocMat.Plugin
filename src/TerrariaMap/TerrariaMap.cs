@@ -25,10 +25,9 @@ public class TerrariaMap(ILogger logger, BotContext bot) : XocMatPlugin(logger, 
 
     public string SavePath = Path.Combine(XocMatAPI.SAVE_PATH, "TerrariaMap.json");
 
-    public override void Initialize()
+    protected override void Initialize()
     {
         BotContext.Invoker.OnGroupMessageReceived += Event_OnGroupMessage;
-        base.Initialize();
     }
 
     private void Event_OnGroupMessage(BotContext context, GroupMessageEvent e)
@@ -77,6 +76,5 @@ public class TerrariaMap(ILogger logger, BotContext bot) : XocMatPlugin(logger, 
     protected override void Dispose(bool dispose)
     {
         BotContext.Invoker.OnGroupMessageReceived -= Event_OnGroupMessage;
-        base.Dispose(dispose);
     }
 }

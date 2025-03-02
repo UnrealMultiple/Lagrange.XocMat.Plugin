@@ -9,10 +9,9 @@ namespace DeepSeek;
 
 public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 {
-    public override void Initialize()
+    protected override void Initialize()
     {
         BotContext.Invoker.OnGroupMessageReceived += Invoker_OnGroupMessageReceived;
-        base.Initialize();
     }
 
     private void Invoker_OnGroupMessageReceived(BotContext context, Lagrange.Core.Event.EventArg.GroupMessageEvent e)
@@ -50,6 +49,5 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     protected override void Dispose(bool dispose)
     {
         BotContext.Invoker.OnGroupMessageReceived -= Invoker_OnGroupMessageReceived;
-        base.Dispose(dispose);
     }
 }
