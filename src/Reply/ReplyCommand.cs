@@ -95,7 +95,9 @@ public class ReplyCommand : Command
         await args.Event.Reply($"语法错误，正确语法:" +
             $"\n{args.CommamdPrefix}{args.Name} add <规则> <回复>" +
             $"\n{args.CommamdPrefix}{args.Name} del <序号>" +
-            $"{args.CommamdPrefix}{args.Name} list", true);
+            $"\n{args.CommamdPrefix}{args.Name} list" +
+            $"\n{args.CommamdPrefix}{args.Name} var" +
+            $"\n{args.CommamdPrefix}{args.Name} content", true);
     }
 
     private static async Task Add(GroupCommandArgs args, ILogger logger)
