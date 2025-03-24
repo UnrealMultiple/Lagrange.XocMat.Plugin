@@ -3,7 +3,6 @@ using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message.Entity;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Plugin;
-using Lagrange.XocMat.Utility;
 using Microsoft.Extensions.Logging;
 
 namespace Reply;
@@ -41,7 +40,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
         ReplyAdapter.RegisterAsyncHandler("time", (name, param, chain) => Task.FromResult(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
         ReplyAdapter.RegisterContentHandler("image", (type, content, chain, builder) =>
         {
-            var bytes = CheckUri(content);
+            var bytes = FileReader.ReadFileBuffer(content);
             if (bytes.Length > 0)
             {
                 builder.Image(bytes);
@@ -50,7 +49,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
         });
         ReplyAdapter.RegisterContentHandler("video", (type, content, chain, builder) =>
         {
-            var bytes = CheckUri(content);
+            var bytes = FileReader.ReadFileBuffer(content);
             if (bytes.Length > 0)
             {
                 builder.Video(bytes);
@@ -85,25 +84,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
         });
         BotContext.Invoker.OnGroupMessageReceived += OnGroupMessageReceived;
     }
-    
-    public byte[] CheckUri(string input)
-    {
-        if (Uri.TryCreate(input, UriKind.Absolute, out var uri))
-        {
-            if (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
-            {
-                return HttpUtils.GetByteAsync(input).Result;
-            }
-            else if (uri.IsFile)
-            {
-                if (File.Exists(uri.LocalPath) || Directory.Exists(uri.LocalPath))
-                {
-                    return File.ReadAllBytes(uri.LocalPath);
-                }
-            }
-        }
-       return [];
-    }
+   
     
     private void OnGroupMessageReceived(BotContext bot, GroupMessageEvent e)
     {
