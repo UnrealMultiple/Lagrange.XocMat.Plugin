@@ -7,37 +7,19 @@ namespace Reply;
 
 public enum ContentType { Text, Image, Face, Video, At, Forward, SelectAt }
 
-public class ContentItem(ContentType type, string content)
+public class ReplyRule(string matchPattern, string replyTemplate)
 {
-    public ContentType Type { get; set; } = type;
-    public string Content { get; set; } = content;
-}
+    public string MatchPattern { get; set; } = matchPattern;
 
-public class Response
-{
-    public List<ContentItem> Contents { get; set; } = new List<ContentItem>();
-}
-
-public class ReplyRule
-{
-    public string MatchPattern { get; set; }
-    
     [JsonIgnore]
-    public Regex TriggerRegex { get; set; }
-    public string ReplyTemplate { get; set; }
-
-    public ReplyRule(string matchPattern, string replyTemplate)
-    {
-        MatchPattern = matchPattern;
-        ReplyTemplate = replyTemplate;
-        TriggerRegex = new Regex(matchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    }
+    public Regex TriggerRegex { get; set; } = new Regex(matchPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    public string ReplyTemplate { get; set; } = replyTemplate;
 }
 
 public delegate Task<string> AsyncVariableHandler(string varName, string? param, MessageChain chain);
 public delegate Task ContentTypeHandler(string type, string content, MessageChain chain, MessageBuilder builder);
 
-public class ReplyAdapter
+public partial class ReplyAdapter
 {
     private static List<ReplyRule> _rules => Config.Instance.Rules;
     private static readonly Dictionary<string, AsyncVariableHandler> _asyncHandlers = [];
@@ -98,7 +80,7 @@ public class ReplyAdapter
 
     private static string ReplaceRegexGroups(Match match, string input)
     {
-        return Regex.Replace(input, @"\$(\d+)", m =>
+        return ReplaceGroup().Replace(input, m =>
         {
             if (!int.TryParse(m.Groups[1].Value, out int index)) return m.Value;
             
@@ -175,4 +157,7 @@ public class ReplyAdapter
 
         return builder;
     }
+
+    [GeneratedRegex(@"\$(\d+)")]
+    public static partial Regex ReplaceGroup();
 }

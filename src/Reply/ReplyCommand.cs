@@ -15,7 +15,7 @@ public class ReplyCommand : Command
 
     public override string[] Permissions => ["onebot.reply"];
 
-    private Dictionary<string, Func<GroupCommandArgs, ILogger, Task>> Action { get; set; } = new()
+    private Dictionary<string, Func<GroupCommandArgs, ILogger, Task>> _action = new()
     {
         { "add", Add },
         { "remove", Remove },
@@ -87,7 +87,7 @@ public class ReplyCommand : Command
 
     public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
-        if (args.Parameters.Count >= 1 && Action.TryGetValue(args.Parameters[0], out var act))
+        if (args.Parameters.Count >= 1 && _action.TryGetValue(args.Parameters[0], out var act))
         {
             await act(args, log);
             return;
