@@ -21,8 +21,20 @@ public class ReplyCommand : Command
         { "remove", Remove },
         { "del", Remove },
         { "list", ReplyList },
-        { "var", Variables }
+        { "var", Variables },
+        { "content", Contents }
     };
+
+    private static async Task Contents(GroupCommandArgs args, ILogger logger)
+    {
+        var handlers = ReplyAdapter.GetContentHandlers();
+        if (handlers.Count == 0)
+        {
+            await args.Event.Reply("没有任何内容处理器", true);
+            return;
+        }
+        await args.Event.Reply("内容处理器列表: " + string.Join(", ", handlers), true);
+    }
 
     private static async Task Variables(GroupCommandArgs args, ILogger logger)
     {
