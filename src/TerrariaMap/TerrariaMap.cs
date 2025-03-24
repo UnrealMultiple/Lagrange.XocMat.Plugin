@@ -40,7 +40,7 @@ public class TerrariaMap(ILogger logger, BotContext bot) : XocMatPlugin(logger, 
                     return;
                 if (!string.IsNullOrEmpty(file.FileUrl))
                 {
-                    var buffer = HttpUtils.HttpGetByte(file.FileUrl).Result;
+                    var buffer = HttpUtils.GetByteAsync(file.FileUrl).Result;
                     if (TerrariaServer.IsReWorld(buffer))
                     {
                         await e.Reply("检测到Terraria地图，正在生成.map文件....");

@@ -42,7 +42,12 @@ public class BindPlayer : Command
             }
             var token = Guid.NewGuid().ToString()[..8];
             AddTempData(args.Event.Chain.GroupUin!.Value, userName, token);
-            MailHelper.SendMail($"{args.Event.Chain.GroupMemberInfo!.Uin}@qq.com", "绑定账号验证码", $"您的验证码为: {token}");
+            MailHelper.Builder(XocMatSetting.Instance.MailHost, XocMatSetting.Instance.SenderPwd)
+                .SetSender(XocMatSetting.Instance.SenderMail)
+                .AddTarget($"{args.Event.Chain.GroupMemberInfo!.Uin}@qq.com")
+                .SetTile("绑定账号验证码")
+                .SetBody($"您的验证码为: {token}")
+                .Send();
             await args.Event.Reply($"绑定账号 {userName} => {args.Event.Chain.GroupMemberInfo.Uin} 至{server.Name}服务器!" +
                 $"\n请在之后进行使用/绑定 验证 [令牌]" +
                 $"\n验证令牌已发送至你的邮箱点击下方链接可查看" +

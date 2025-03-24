@@ -20,7 +20,7 @@ public class Cosplay : Command
 
     public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
-        var res = await HttpUtils.HttpGetString(CosUrl);
+        var res = await HttpUtils.GetStringAsync(CosUrl);
         var json = JsonNode.Parse(res);
         var arr = json?["imgurls"]?.AsArray();
         if (arr == null)
@@ -30,7 +30,7 @@ public class Cosplay : Command
         {
             var url = img?.ToString();
             if (url == null) continue;
-            chains.Add(MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.HttpGetByte(url).Result).Build());
+            chains.Add(MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.GetByteAsync(url).Result).Build());
         }
         var build = MessageBuilder.Group(args.Event.Chain.GroupUin!.Value);
         await args.Event.Reply(build.MultiMsg(chains));

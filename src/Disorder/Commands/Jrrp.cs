@@ -30,7 +30,7 @@ public class Jrrp : Command
             JrrpConfig.Instance.SaveJrrp(args.Event.Chain.GroupMemberInfo!.Uin, val);
             JrrpConfig.Save();
         }
-        var buffer = await HttpUtils.HttpGetByte(JrrpUrl + $"?let={args.Event.Chain.GroupMemberInfo!.Uin}{val}");
+        var buffer = await HttpUtils.GetByteAsync(JrrpUrl + $"?let={args.Event.Chain.GroupMemberInfo!.Uin}{val}");
         List<MessageChain> chains = [
                 MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Text($"今日运势").Build(),
                 MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Text($"你今日的运势值: {val}").Build(),

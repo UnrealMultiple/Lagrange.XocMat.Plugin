@@ -1,11 +1,9 @@
-﻿using System;
-using System.Reflection.Metadata.Ecma335;
-using Lagrange.Core;
+﻿using Lagrange.Core;
 using Lagrange.Core.Event.EventArg;
-using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Plugin;
+using Lagrange.XocMat.Utility;
 using Microsoft.Extensions.Logging;
 
 namespace Reply;
@@ -19,8 +17,6 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     public override string Author => "少司命";
 
     public override Version Version => new(1, 0, 0, 0);
-
-    private readonly HttpClient _httpClient = new();
 
     protected override void Dispose(bool dispose)
     {
@@ -96,7 +92,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
         {
             if (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
             {
-                return _httpClient.GetByteArrayAsync(input).Result;
+                return HttpUtils.GetByteAsync(input).Result;
             }
             else if (uri.IsFile)
             {

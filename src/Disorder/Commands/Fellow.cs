@@ -36,10 +36,10 @@ public class Fellow : Command
             FollowConfig.Save();
         }
 
-        var stream = await HttpUtils.HttpGetByte(FellowUrl + $"?first={(args.Event.Chain.GroupMemberInfo!.MemberName.Length > 6 ? args.Event.Chain.GroupMemberInfo!.MemberName[..6] : args.Event.Chain.GroupMemberInfo!.MemberCard)}&second={targetName}");
+        var stream = await HttpUtils.GetByteAsync(FellowUrl + $"?first={(args.Event.Chain.GroupMemberInfo!.MemberName.Length > 6 ? args.Event.Chain.GroupMemberInfo!.MemberName[..6] : args.Event.Chain.GroupMemberInfo!.MemberCard)}&second={targetName}");
         List<MessageChain> chains = [
                  MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Text($"今日道侣").Build(),
-                 MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.HttpGetByte($"http://q.qlogo.cn/headimg_dl?dst_uin={targerid}&spec=640&img_type=png").Result).Text($"账号: {targerid}\n昵称: {targetName}").Build(),
+                 MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.GetByteAsync($"http://q.qlogo.cn/headimg_dl?dst_uin={targerid}&spec=640&img_type=png").Result).Text($"账号: {targerid}\n昵称: {targetName}").Build(),
                  MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(stream).Build()
             ];
         await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MultiMsg(chains));

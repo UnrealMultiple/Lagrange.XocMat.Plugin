@@ -62,7 +62,7 @@ public partial class Bilibili(ILogger logger, BotContext bot) : XocMatPlugin(log
             sb.Append($"转发:{share} | ");
             sb.Append($"弹幕:{danmaku} ");
             sb.Append($"评论:{reply} ");
-            builder.Image(HttpUtils.HttpGetByte(pic).Result);
+            builder.Image(HttpUtils.GetByteAsync(pic).Result);
             builder.Text(title);
             builder.Text(sb.ToString().Trim());
 
@@ -98,7 +98,7 @@ public partial class Bilibili(ILogger logger, BotContext bot) : XocMatPlugin(log
                         {
                             var picture = pictures[i] ?? throw new Exception($"data.reply[0].content.pictures[{i}] is null.");
                             var imgsrc = picture["img_src"]?.GetValue<string>() ?? throw new Exception($"data.reply[0].content.pictures[{i}].img_src is null.");
-                            builder.Image(HttpUtils.HttpGetByte(imgsrc).Result);
+                            builder.Image(HttpUtils.GetByteAsync(imgsrc).Result);
                         }
                     }
                 }
