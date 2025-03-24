@@ -55,15 +55,19 @@ public class ReplyCommand : Command
             await args.Event.Reply("没有任何规则", true);
             return;
         }
-        var table = new TableBuilder();
-        table.SetTitle("ReplyRule");
-        table.AddRow("序号", "规则", "回复");
+        var builder = new TableBuilder();
+        builder.AddHeader("序号", "规则", "回复");
         for (var i = 0; i < rules.Count; i++)
         {
-            table.AddRow((i + 1).ToString(), rules[i].MatchPattern, rules[i].ReplyTemplate);
+            builder.AddRow((i + 1).ToString(), rules[i].MatchPattern, rules[i].ReplyTemplate);
         }
-        var buffer = await table.BuildAsync();
-        await args.MessageBuilder.Image(buffer).Reply();
+        var table = new TableGenerate()
+        {
+            AvatarPath = args.MemberUin,
+            Title = "ReplyRule",
+            TableRows = builder.Build()
+        };
+        await args.MessageBuilder.Image(table.Generate()).Reply();
     }
 
     private static async Task Remove(GroupCommandArgs args, ILogger logger)
