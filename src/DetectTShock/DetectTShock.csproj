@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\template.targets" />
+	<ItemGroup>
+	  <PackageReference Include="SharpCompress" Version="0.39.0" />
+	</ItemGroup>
+	<PropertyGroup>
+		<PackNames>SharpCompress.dll;ZstdSharp.dll</PackNames>
+	</PropertyGroup>
+</Project>
+
