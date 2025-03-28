@@ -20,20 +20,16 @@ public class PManager : Command
         if (args.Parameters.Count == 1 && args.Parameters[0].Equals("list", StringComparison.CurrentCultureIgnoreCase))
         {
             var tableBuilder = new TableBuilder()
-                .AddHeader("序号", "插件名称", "插件作者", "插件说明", "插件版本", "启用");
+                .SetTitle("插件列表")
+                .SetMemberUin(args.MemberUin)
+                .SetHeader("序号", "插件名称", "插件作者", "插件说明", "插件版本", "启用");
             int index = 1;
             foreach (var plugin in XocMatAPI.PluginLoader.PluginContext.Plugins)
             {
                 tableBuilder.AddRow(index.ToString(), plugin.Plugin.Name, plugin.Plugin.Author, plugin.Plugin.Description, plugin.Plugin.Version.ToString(), plugin.Initialized.ToString());
                 index++;
             }
-            var table = new TableGenerate()
-            {
-                AvatarPath = args.MemberUin,
-                Title = "插件列表",
-                TableRows = tableBuilder.Build()
-            };
-            await args.MessageBuilder.Image(table.Generate()).Reply();
+            await args.MessageBuilder.Image(tableBuilder.Builder()).Reply();
         }
         else if (args.Parameters.Count == 2 && args.Parameters[0].ToLower() == "off")
         {
