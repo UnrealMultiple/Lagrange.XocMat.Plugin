@@ -42,6 +42,6 @@ public class Fellow : Command
                  MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.GetByteAsync($"http://q.qlogo.cn/headimg_dl?dst_uin={targerid}&spec=640&img_type=png").Result).Text($"账号: {targerid}\n昵称: {targetName}").Build(),
                  MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(stream).Build()
             ];
-        await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MultiMsg(chains));
+        await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MultiMsg(chains.ToArray()));
     }
 }

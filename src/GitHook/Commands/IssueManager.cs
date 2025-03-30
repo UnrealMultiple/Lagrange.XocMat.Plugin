@@ -2,6 +2,7 @@
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Extensions;
+using Lagrange.XocMat.Utility.Images;
 using Microsoft.Extensions.Logging;
 using Octokit;
 
@@ -16,10 +17,10 @@ public class IssueManager : Command
     {
         if (args.Parameters.Count < 1)
         {
-            await args.Event.Reply($"语法错误，正确语法: \n{args.CommamdPrefix}{args.Name} list\n" +
-                $"{args.CommamdPrefix}{args.Name} see [编号]\n" +
-                $"{args.CommamdPrefix}{args.Name} close [编号]\n" +
-                $"{args.CommamdPrefix}{args.Name} reply [编号] [回复]");
+            await args.Event.Reply($"语法错误，正确语法: \n{args.CommandPrefix}{args.Name} list\n" +
+                $"{args.CommandPrefix}{args.Name} see [编号]\n" +
+                $"{args.CommandPrefix}{args.Name} close [编号]\n" +
+                $"{args.CommandPrefix}{args.Name} reply [编号] [回复]");
             return;
         }
         switch (args.Parameters[0].ToLower())
@@ -67,22 +68,16 @@ public class IssueManager : Command
                 break;
             case "list":
                 var issues = await TShockPluginRepoClient.GetIssueOpen();
-                var sb = new StringBuilder();
-                sb.AppendLine($$"""<div align="center">""");
-                sb.AppendLine();
-                sb.AppendLine();
-                sb.AppendLine();
-                sb.AppendLine($"# 正在进行的Issue列表");
-                sb.AppendLine();
-                sb.AppendLine("|Issue编号|标题|发起人|");
-                sb.AppendLine("|:--:|:--:|:--:|");
+                var tableBuilder = TableBuilder.Create()
+                    .SetTitle("正在进行的Issue")
+                    .SetLineMaxTextLength(60)
+                    .SetMemberUin(args.MemberUin)
+                    .SetHeader("编号", "标题", "发起人");
                 foreach (var issue in issues)
                 {
-                    sb.AppendLine($"|{issue.Number}|{issue.Title}|{issue.User.Login}|");
+                    tableBuilder.AddRow(issue.Number.ToString(), issue.Title, issue.User.Login);
                 }
-                sb.AppendLine();
-                sb.AppendLine($$"""</div>""");
-                await args.MessageBuilder.MarkdownImage(sb.ToString()).Reply();
+                await args.MessageBuilder.Image(tableBuilder.Builder()).Reply();
                 break;
             default:
                 await args.Event.Reply("错误的子命令!");

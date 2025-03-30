@@ -2,7 +2,6 @@
 using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Message;
 using Lagrange.XocMat;
-using Lagrange.XocMat.Extensions;
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.PullRequest;
@@ -49,22 +48,22 @@ public class WebHook : WebhookEventProcessor
     //    }
     //}
 
-    protected override async Task ProcessPullRequestWebhookAsync(WebhookHeaders headers, PullRequestEvent pullRequestEvent, PullRequestAction action)
-    {
-        if (action == PullRequestAction.Opened)
-        {
-            var title = pullRequestEvent.PullRequest.Title;
-            var userName = pullRequestEvent.PullRequest.User.Login;
-            var repName = pullRequestEvent.Repository?.FullName;
-            var sb = new StringBuilder($"# Pull Request Github 仓库 {repName} #{pullRequestEvent.Number}");
-            sb.AppendLine();
-            sb.AppendLine($"## {title}");
-            sb.AppendLine($"- 发起者: `{userName}`");
-            sb.AppendLine($"```");
-            sb.AppendLine(pullRequestEvent.PullRequest.Body);
-            sb.AppendLine($"```");
-            await SendGroupMsg(Config.Instance.Groups.Select(i => MessageBuilder.Group(i).MarkdownImage(sb.ToString())));
-        }
+    //protected override Task ProcessPullRequestWebhookAsync(WebhookHeaders headers, PullRequestEvent pullRequestEvent, PullRequestAction action)
+    //{
+    //    if (action == PullRequestAction.Opened)
+    //    {
+    //        var title = pullRequestEvent.PullRequest.Title;
+    //        var userName = pullRequestEvent.PullRequest.User.Login;
+    //        var repName = pullRequestEvent.Repository?.FullName;
+    //        var sb = new StringBuilder($"# Pull Request Github 仓库 {repName} #{pullRequestEvent.Number}");
+    //        sb.AppendLine();
+    //        sb.AppendLine($"## {title}");
+    //        sb.AppendLine($"- 发起者: `{userName}`");
+    //        sb.AppendLine($"```");
+    //        sb.AppendLine(pullRequestEvent.PullRequest.Body);
+    //        sb.AppendLine($"```");
+    //        await SendGroupMsg(Config.Instance.Groups.Select(i => MessageBuilder.Group(i).MarkdownImage(sb.ToString())));
+    //    }
 
-    }
+    //}
 }

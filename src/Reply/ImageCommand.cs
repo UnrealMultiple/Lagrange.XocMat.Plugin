@@ -107,9 +107,9 @@ public class ImageCommand : Command
             return;
         }
         await args.Event.Reply($"语法错误，正确语法:" +
-            $"\n{args.CommamdPrefix}{args.Name} upload" +
-            $"\n{args.CommamdPrefix}{args.Name} list" +
-            $"\n{args.CommamdPrefix}{args.Name} url" +
-            $"\n{args.CommamdPrefix}{args.Name} del <文件名>", true);
+            $"\n{args.CommandPrefix}{args.Name} upload" +
+            $"\n{args.CommandPrefix}{args.Name} list" +
+            $"\n{args.CommandPrefix}{args.Name} url" +
+            $"\n{args.CommandPrefix}{args.Name} del <文件名>", true);
     }
 }

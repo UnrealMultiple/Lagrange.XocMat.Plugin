@@ -69,7 +69,7 @@ public class BindPlayer : Command
             }
             else
             {
-                await args.Event.Reply($"请先输入{args.CommamdPrefix}{args.Name} [名称] 在进行验证", true);
+                await args.Event.Reply($"请先输入{args.CommandPrefix}{args.Name} [名称] 在进行验证", true);
             }
         }
     }

@@ -70,7 +70,7 @@ public class ReplyCommand : Command
     {
         if(args.Parameters.Count < 2)
         {
-            await args.Event.Reply($"语法错误，正确语法: {args.CommamdPrefix}{args.Name} remove <序号>");
+            await args.Event.Reply($"语法错误，正确语法: {args.CommandPrefix}{args.Name} remove <序号>");
             return;
         }
         if (int.TryParse(args.Parameters[1], out var index))
@@ -93,18 +93,18 @@ public class ReplyCommand : Command
             return;
         }
         await args.Event.Reply($"语法错误，正确语法:" +
-            $"\n{args.CommamdPrefix}{args.Name} add <规则> <回复>" +
-            $"\n{args.CommamdPrefix}{args.Name} del <序号>" +
-            $"\n{args.CommamdPrefix}{args.Name} list" +
-            $"\n{args.CommamdPrefix}{args.Name} var" +
-            $"\n{args.CommamdPrefix}{args.Name} content", true);
+            $"\n{args.CommandPrefix}{args.Name} add <规则> <回复>" +
+            $"\n{args.CommandPrefix}{args.Name} del <序号>" +
+            $"\n{args.CommandPrefix}{args.Name} list" +
+            $"\n{args.CommandPrefix}{args.Name} var" +
+            $"\n{args.CommandPrefix}{args.Name} content", true);
     }
 
     private static async Task Add(GroupCommandArgs args, ILogger logger)
     {
         if(args.Parameters.Count < 3)
         {
-            await args.Event.Reply($"语法错误，正确语法: {args.CommamdPrefix}{args.Name} add <匹配词> <回复词>");
+            await args.Event.Reply($"语法错误，正确语法: {args.CommandPrefix}{args.Name} add <匹配词> <回复词>");
             return;
         }
         Config.Instance.Rules.Add(new(args.Parameters[1], args.Parameters[2]));

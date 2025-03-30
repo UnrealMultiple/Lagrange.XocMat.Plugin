@@ -36,6 +36,6 @@ public class Jrrp : Command
                 MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Text($"你今日的运势值: {val}").Build(),
                 MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(buffer).Build()
             ];
-        await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MultiMsg(chains));
+        await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MultiMsg(chains.ToArray()));
     }
 }

@@ -1,10 +1,9 @@
-﻿using System.Text;
-using Lagrange.Core.Message;
-using Lagrange.XocMat.Command;
+﻿using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
 using Lagrange.XocMat.Configuration;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Internal;
+using Lagrange.XocMat.Utility.Images;
 using Microsoft.Extensions.Logging;
 
 namespace TerrariaCart;
@@ -57,37 +56,29 @@ public class CartManager : Command
                     await args.Event.Reply("购物车空空如也!", true);
                     return;
                 }
-                var sb = new StringBuilder();
-                sb.AppendLine($$"""<div align="center">""");
-                sb.AppendLine();
-                sb.AppendLine();
+                var builder = TableBuilder.Create()
+                    .SetTitle("购物车")
+                    .SetMemberUin(args.MemberUin)
+                    .SetHeader("购物车名称", "商品名称", "数量", "价格");
                 foreach (var (name, shops) in carts)
                 {
-                    sb.AppendLine();
-                    sb.AppendLine($"# 购物车`{name}`");
-                    sb.AppendLine();
-                    sb.AppendLine("|商品ID|商品名称|数量|价格|");
-                    sb.AppendLine("|:--:|:--:|:--:|:--:|");
                     foreach (var index in shops)
                     {
                         var shop = TerrariaShop.Instance.GetShop(index);
                         if (shop != null)
-                            sb.AppendLine($"|{index}|{shop.Name}|{shop.Num}|{shop.Price}|");
+                            builder.AddRow(name, shop.Name, shop.Num.ToString(), shop.Price.ToString());
                     }
                 }
-                sb.AppendLine();
-                sb.AppendLine();
-                sb.AppendLine("</div>");
 
-                await args.Event.Reply(MessageBuilder.Group(args.Event.Chain.GroupUin!.Value).MarkdownImage(sb.ToString()));
+                await args.MessageBuilder.Image(builder.Builder()).Reply();
             }
             else
             {
                 await args.Event.Reply("语法错误,正确语法\n" +
-                    $"{args.CommamdPrefix}{args.Name} add [购物车] [商品ID]\n" +
-                    $"{args.CommamdPrefix}{args.Name} del [购物车] [商品ID]\n" +
-                    $"{args.CommamdPrefix}{args.Name} clear [购物车]\n" +
-                    $"{args.CommamdPrefix}{args.Name} list");
+                    $"{args.CommandPrefix}{args.Name} add [购物车] [商品ID]\n" +
+                    $"{args.CommandPrefix}{args.Name} del [购物车] [商品ID]\n" +
+                    $"{args.CommandPrefix}{args.Name} clear [购物车]\n" +
+                    $"{args.CommandPrefix}{args.Name} list");
             }
         }
         catch (Exception e)

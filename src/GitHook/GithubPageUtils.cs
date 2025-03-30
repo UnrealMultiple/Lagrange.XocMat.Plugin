@@ -6,22 +6,19 @@ namespace GitHook;
 
 internal class GithubPageUtils
 {
-    private static IBrowser browser = (IBrowser)typeof(XocMatAPI).Assembly.GetType("Lagrange.XocMat.Utility.MarkdownHelper")
-        ?.GetField("browser", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)?.GetValue(null)!;
+    private static IBrowser? browser;
 
     public static async Task<byte[]> ScreenPage(string url, string? click = null)
     {
-        if (browser == null)
+        if (browser == null || !browser.IsConnected || browser.IsClosed || browser.Process.HasExited)
         {
             await new BrowserFetcher().DownloadAsync();
             browser = await Puppeteer.LaunchAsync(new LaunchOptions()
             {
                 Headless = true,
             });
-            typeof(XocMatAPI).Assembly.GetType("Lagrange.XocMat.Utility.MarkdownHelper")
-        ?.GetField("browser", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)?.SetValue(null, browser);
         }
-        var page = await browser.NewPageAsync();
+        using var page = await browser.NewPageAsync();
         await page.GoToAsync(url, WaitUntilNavigation.Load).ConfigureAwait(false);
 
         if (!string.IsNullOrEmpty(click))

@@ -72,9 +72,9 @@ public class PManager : Command
         else
         {
             await args.Event.Reply("语法错误,正确语法:\n" +
-                $"{args.CommamdPrefix}{args.Name} list" +
-                $"{args.CommamdPrefix}{args.Name} off [序号]" +
-                $"{args.CommamdPrefix}{args.Name} on [序号]");
+                $"{args.CommandPrefix}{args.Name} list" +
+                $"{args.CommandPrefix}{args.Name} off [序号]" +
+                $"{args.CommandPrefix}{args.Name} on [序号]");
         }
     }
 }

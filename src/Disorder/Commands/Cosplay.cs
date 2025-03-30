@@ -33,6 +33,6 @@ public class Cosplay : Command
             chains.Add(MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.GetByteAsync(url).Result).Build());
         }
         var build = MessageBuilder.Group(args.Event.Chain.GroupUin!.Value);
-        await args.Event.Reply(build.MultiMsg(chains));
+        await args.Event.Reply(build.MultiMsg(chains.ToArray()));
     }
 }
