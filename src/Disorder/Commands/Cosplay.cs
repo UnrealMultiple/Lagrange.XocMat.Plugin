@@ -35,7 +35,7 @@ public class Cosplay : Command
         }
         var build = MessageBuilder.Group(args.Event.Chain.GroupUin!.Value);
         var result = await args.Event.Reply(build.MultiMsg(chains.ToArray()));
-        TimingUtils.Schedule(10, async () =>
+        TimingUtils.Schedule(Config.Instance.CosplayRecallTime, async () =>
         {
             await args.Bot.RecallGroupMessage(args.GroupUin, result);
         });

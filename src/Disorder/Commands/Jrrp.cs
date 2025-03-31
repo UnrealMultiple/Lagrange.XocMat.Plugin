@@ -18,7 +18,7 @@ public class Jrrp : Command
     private static readonly Random _random = new();
     public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
-        var current = JrrpConfig.Instance.GetJrrp(args.Event.Chain.GroupMemberInfo!.Uin);
+        var current = Config.Instance.GetJrrp(args.Event.Chain.GroupMemberInfo!.Uin);
         byte val = 0;
         if (current != null && current.Time.Date == DateTime.Now.Date)
         {
@@ -27,8 +27,8 @@ public class Jrrp : Command
         else
         {
             val = Convert.ToByte(_random.Next(0, 100));
-            JrrpConfig.Instance.SaveJrrp(args.Event.Chain.GroupMemberInfo!.Uin, val);
-            JrrpConfig.Save();
+            Config.Instance.SaveJrrp(args.Event.Chain.GroupMemberInfo!.Uin, val);
+            Config.Save();
         }
         var buffer = await HttpUtils.GetByteAsync(JrrpUrl + $"?let={args.Event.Chain.GroupMemberInfo!.Uin}{val}");
         List<MessageChain> chains = [
