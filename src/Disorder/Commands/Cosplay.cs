@@ -15,7 +15,7 @@ public class Cosplay : Command
 
     public override string HelpText => "cosplay";
 
-    public override string[] Permissions => ["onebot.aichat.cosplay"];
+    public override string[] Permissions => ["onebot.cosplay"];
 
     private const string CosUrl = "https://imgapi.cn/cos2.php?return=jsonpro";
 
