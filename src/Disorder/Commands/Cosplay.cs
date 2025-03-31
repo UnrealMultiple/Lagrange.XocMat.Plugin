@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Nodes;
+using Lagrange.Core.Common.Interface.Api;
 using Lagrange.Core.Message;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
@@ -33,6 +34,10 @@ public class Cosplay : Command
             chains.Add(MessageBuilder.Friend(args.Event.Chain.GroupMemberInfo!.Uin).Image(HttpUtils.GetByteAsync(url).Result).Build());
         }
         var build = MessageBuilder.Group(args.Event.Chain.GroupUin!.Value);
-        await args.Event.Reply(build.MultiMsg(chains.ToArray()));
+        var result = await args.Event.Reply(build.MultiMsg(chains.ToArray()));
+        TimingUtils.Schedule(10, async () =>
+        {
+            await args.Bot.RecallGroupMessage(args.GroupUin, result);
+        });
     }
 }
