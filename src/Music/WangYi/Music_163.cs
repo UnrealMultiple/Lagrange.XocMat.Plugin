@@ -244,7 +244,7 @@ public class Music_163
             }
         });
         var taskres = await Task.WhenAll(tasks);
-        return Utils.GenerateCompressed(taskres.ToDictionary(i => i.Item1, i => i.Item2));
+        return Utils.GenerateCompressed(taskres.ToList());
     }
 
     /// <summary>

@@ -211,7 +211,7 @@ public class Music_QQ : IDisposable
             }
         });
         var taskres = await Task.WhenAll(tasks);
-        return Utils.GenerateCompressed(taskres.ToDictionary(i => i.Item1, i => i.Item2));
+        return Utils.GenerateCompressed(taskres.ToList());
     }
 
     public async Task<PlayData> GetDetail(long id, int dirid = 0)

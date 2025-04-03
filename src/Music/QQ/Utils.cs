@@ -5,7 +5,7 @@ namespace Music.QQ;
 
 public class Utils
 {
-    public static byte[] GenerateCompressed(Dictionary<string, byte[]> data)
+    public static byte[] GenerateCompressed(List<(string fileName, byte[] buffer)> data)
     {
         using var ms = new MemoryStream();
         using var zip = new ZipArchive(ms, ZipArchiveMode.Create);
