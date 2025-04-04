@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
+using System.Text;
+using System.Text.RegularExpressions;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.Metadata;
@@ -21,27 +23,21 @@ public class DllDecompiler : IDisposable
     private PEFile _peFile;
     private CSharpDecompiler _decompiler;
     private UniversalAssemblyResolver _resolver;
+    private readonly HashSet<string> _processedTypes = new();
     #endregion
 
     #region 加载方法
-    /// <summary>
-    /// 从文件路径加载DLL
-    /// </summary>
     public bool LoadFromFile(string filePath)
     {
         try
         {
-            // 将文件完全读入内存
             byte[] buffer = File.ReadAllBytes(filePath);
             using var stream = new MemoryStream(buffer);
-        
-            // 使用内存流创建PEFile
             _peFile = new PEFile(
-                filePath, 
-                stream, 
+                filePath,
+                stream,
                 PEStreamOptions.PrefetchMetadata | PEStreamOptions.PrefetchEntireImage
             );
-        
             InitializeResolver(filePath);
             return true;
         }
@@ -52,11 +48,6 @@ public class DllDecompiler : IDisposable
         }
     }
 
-    /// <summary>
-    /// 从内存字节流加载DLL
-    /// </summary>
-    /// <param name="buffer">DLL字节数据</param>
-    /// <param name="virtualName">虚拟文件名（用于依赖解析）</param>
     public bool LoadFromBuffer(byte[] buffer, string virtualName = "MemoryAssembly.dll")
     {
         try
@@ -75,24 +66,24 @@ public class DllDecompiler : IDisposable
     #endregion
 
     #region 核心反编译逻辑
-    /// <summary>
-    /// 执行完整反编译
-    /// </summary>
     public bool DecompileAll()
     {
         try
         {
-            if (_decompiler == null) return false;
+            if (_decompiler?.TypeSystem?.MainModule == null)
+                return false;
 
-            var mainModule = _decompiler.TypeSystem.MainModule;
-            foreach (var typeDef in mainModule.TypeDefinitions)
+            foreach (var typeDef in _decompiler.TypeSystem.MainModule.TypeDefinitions)
             {
-                if (ShouldSkipType(typeDef)) continue;
+                if (ShouldSkipType(typeDef) || 
+                    _processedTypes.Contains(typeDef.FullTypeName.FullName))
+                    continue;
 
                 var result = ProcessType(typeDef);
                 if (result.HasValue)
                 {
                     DecompiledFiles[result.Value.FileName] = result.Value.Code;
+                    _processedTypes.Add(typeDef.FullTypeName.FullName);
                 }
             }
             return true;
@@ -105,7 +96,118 @@ public class DllDecompiler : IDisposable
     }
     #endregion
 
-    #region 辅助方法
+    #region 类型处理逻辑
+    private static bool ShouldSkipType(ITypeDefinition typeDef)
+    {
+        return typeDef.IsCompilerGenerated() || 
+               typeDef.Name.Contains("<") || 
+               typeDef.DeclaringType != null;
+    }
+
+    private (string FileName, string Code)? ProcessType(ITypeDefinition typeDef)
+    {
+        try
+        {
+            var fileName = GenerateFileName(typeDef);
+            
+            // 处理文件名冲突（特别是泛型类型）
+            if (DecompiledFiles.ContainsKey(fileName))
+            {
+                var guidPart = Guid.NewGuid().ToString("N")[..4];
+                fileName = Path.Combine(
+                    Path.GetDirectoryName(fileName),
+                    $"{Path.GetFileNameWithoutExtension(fileName)}_{guidPart}.cs"
+                );
+            }
+
+            var code = GenerateCode(typeDef);
+            return (fileName, code);
+        }
+        catch (Exception ex)
+        {
+            return ($"Error_{Guid.NewGuid()}.txt", 
+                $"/* Decompilation Error: {ex.Message}\n{ex.StackTrace}*/");
+        }
+    }
+
+    private string GenerateFileName(ITypeDefinition typeDef)
+    {
+        var pathComponents = new List<string>();
+
+        // 处理命名空间
+        if (!string.IsNullOrEmpty(typeDef.Namespace))
+        {
+            pathComponents.AddRange(
+                typeDef.Namespace.Split('.')
+                    .Select(SanitizeFileName)
+            );
+        }
+        else
+        {
+            pathComponents.Add("GlobalTypes");
+        }
+
+        // 构建类型层级路径
+        var typeHierarchy = new Stack<string>();
+        IType currentType = typeDef;
+        while (currentType is ITypeDefinition def)
+        {
+            typeHierarchy.Push(SanitizeFileName(def.Name));
+            currentType = def.DeclaringType;
+        }
+
+        pathComponents.AddRange(typeHierarchy);
+
+        // 构建完整路径
+        var fileName = Path.Combine(pathComponents.ToArray()) + ".cs";
+        return fileName;
+    }
+
+    private string GenerateCode(ITypeDefinition typeDef)
+    {
+        var code = _decompiler.DecompileTypeAsString(typeDef.FullTypeName);
+        return $"// Type: {typeDef.FullTypeName}\n" +
+               $"// Assembly: {_peFile.Name}\n" +
+               $"// Decompiled at: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC\n\n" +
+               code;
+    }
+
+    private static string SanitizeFileName(string name)
+    {
+        // 移除泛型参数计数
+        name = Regex.Replace(name, @"`\d+", "");
+        
+        // 处理特殊字符
+        var sb = new StringBuilder();
+        foreach (char c in name)
+        {
+            sb.Append(c switch
+            {
+                '<' => "Of_",
+                '>' => "",
+                '[' => "Array_",
+                ']' => "",
+                ' ' => "_",
+                '.' => "_",
+                ',' => "_",
+                '&' => "Ref_",
+                '*' => "Pointer_",
+                '?' => "Nullable_",
+                _ when char.IsLetterOrDigit(c) => c,
+                _ => "_"
+            });
+        }
+
+        // 清理连续下划线
+        string cleaned = Regex.Replace(sb.ToString(), @"_+", "_");
+        cleaned = cleaned.Trim('_', '-');
+
+        // 处理保留名称
+        return string.IsNullOrEmpty(cleaned) ? "UnnamedType" : cleaned;
+    }
+    #endregion
+
+    #region 初始化与依赖管理
     private void InitializeResolver(string assemblyPath)
     {
         _resolver = new UniversalAssemblyResolver(
@@ -119,77 +221,18 @@ public class DllDecompiler : IDisposable
         _decompiler = new CSharpDecompiler(
             _peFile,
             _resolver,
-            new DecompilerSettings { ThrowOnAssemblyResolveErrors = false }
+            new DecompilerSettings 
+            { 
+                ThrowOnAssemblyResolveErrors = false,
+                ShowXmlDocumentation = true
+            }
         );
     }
 
-    private (string FileName, string Code)? ProcessType(ITypeDefinition typeDef)
-    {
-        try
-        {
-            var fileName = GenerateFileName(typeDef);
-            var code = GenerateCode(typeDef);
-            return (fileName, code);
-        }
-        catch (Exception ex)
-        {
-            return ($"Error_{Guid.NewGuid()}.txt", $"/* Decompilation Error: {ex.Message} */");
-        }
-    }
-
-    private string GenerateFileName(ITypeDefinition typeDef)
-    {
-        // 处理命名空间路径
-        var nsPath = !string.IsNullOrEmpty(typeDef.Namespace)
-            ? typeDef.Namespace.Replace('.', Path.DirectorySeparatorChar)
-            : "GlobalTypes";
-
-        // 处理类型名称
-        var typeName = typeDef.FullTypeName.ToString();
-        if (!string.IsNullOrEmpty(typeDef.Namespace) && typeName.StartsWith(typeDef.Namespace))
-        {
-            typeName = typeName.Substring(typeDef.Namespace.Length + 1);
-        }
-
-        // 清洗非法字符
-        var safeName = SanitizeFileName(typeName
-            .Replace('+', '.')    // 嵌套类型
-            .Replace('<', '[')    // 泛型
-            .Replace('>', ']'));
-
-        return Path.Combine(nsPath, $"{safeName}.cs");
-    }
-
-    private string GenerateCode(ITypeDefinition typeDef)
-    {
-        var code = _decompiler.DecompileTypeAsString(typeDef.FullTypeName);
-        return $"// Decompiled from: {typeDef.FullTypeName}\n" +
-               $"// Assembly: {_peFile.Name}\n\n" +
-               code;
-    }
-
-    private static string SanitizeFileName(string name)
-    {
-        var invalidChars = Path.GetInvalidFileNameChars();
-        return string.Join("_", name.Split(invalidChars))
-            .Replace("..", ".")  // 防止多个点
-            .Trim('.');
-    }
-
-    private static bool ShouldSkipType(ITypeDefinition typeDef)
-    {
-        return typeDef.IsCompilerGenerated() ||  // 跳过编译器生成的类型
-               typeDef.Name.Contains("<");       // 跳过匿名类型
-    }
-    #endregion
-
-    #region 依赖管理
-    /// <summary>
-    /// 添加依赖搜索路径
-    /// </summary>
     public void AddReferencePath(string directory)
     {
-        _resolver?.AddSearchDirectory(directory);
+        if (Directory.Exists(directory))
+            _resolver?.AddSearchDirectory(directory);
     }
     #endregion
 
@@ -197,8 +240,10 @@ public class DllDecompiler : IDisposable
     public void Dispose()
     {
         _peFile?.Dispose();
+        _peFile = null;
         _resolver = null;
         _decompiler = null;
+        _processedTypes.Clear();
         GC.SuppressFinalize(this);
     }
 

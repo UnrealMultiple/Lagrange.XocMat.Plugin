@@ -18,12 +18,6 @@ public class DecompilerCommand : Command
 
     public override string[] Permissions => ["onebot.csharp.decompiler"];
 
-    public HashSet<string> FileExtension =  new()
-    {
-        ".cs",
-        ".csproj"
-    };
-
     public static byte[] GenerateCompressed(List<(string fileName, byte[] buffer)> data)
     {
         using var ms = new MemoryStream();

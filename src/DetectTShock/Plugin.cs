@@ -23,6 +23,13 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     public override Version Version => new(1, 0, 0, 0);
 
     public readonly static CircularDictionary<ulong, FileEntity> FileCache = new(100);
+    
+    public readonly static HashSet<string> compressedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        ".zip", ".rar", ".7z", 
+       ".tar.gz", ".tar.bz2", ".tar.xz",
+       ".gz", ".bz2", ".xz"
+    };
 
     protected override void Dispose(bool dispose)
     {
@@ -58,10 +65,10 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     private void OnGroupMessageReceived(BotContext context, GroupMessageEvent e)
     {
         var file = e.Chain.GetFile();
-        if (file != null)
-        {
-            FileCache[e.Chain.MessageId] = file;
-        }
+        if (file == null) return;
+        FileCache.Add(e.Chain.MessageId, file);
+        if (!compressedFileExtensions.Contains(Path.GetExtension(file.FileName))) return;
+
         var dirInfo = new DirectoryInfo(Config.Instance.DetectPath);
         if (!dirInfo.Exists)
         {
