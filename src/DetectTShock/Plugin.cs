@@ -22,6 +22,8 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 
     public override Version Version => new(1, 0, 0, 0);
 
+    public readonly static CircularDictionary<ulong, FileEntity> FileCache = new(100);
+
     protected override void Dispose(bool dispose)
     {
         throw new NotImplementedException();
@@ -56,6 +58,10 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     private void OnGroupMessageReceived(BotContext context, GroupMessageEvent e)
     {
         var file = e.Chain.GetFile();
+        if (file != null)
+        {
+            FileCache[e.Chain.MessageId] = file;
+        }
         var dirInfo = new DirectoryInfo(Config.Instance.DetectPath);
         if (!dirInfo.Exists)
         {
