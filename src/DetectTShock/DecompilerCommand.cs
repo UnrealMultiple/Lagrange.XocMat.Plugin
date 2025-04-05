@@ -5,6 +5,7 @@ using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
 using Lagrange.XocMat.Command;
 using Lagrange.XocMat.Command.CommandArgs;
+using Lagrange.XocMat.DB.Manager;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Utility;
 using Microsoft.Extensions.Logging;
@@ -18,28 +19,11 @@ public class DecompilerCommand : Command
 
     public override string[] Permissions => ["onebot.csharp.decompiler"];
 
-    public static byte[] GenerateCompressed(List<(string fileName, byte[] buffer)> data)
-    {
-        using var ms = new MemoryStream();
-        using var zip = new ZipArchive(ms, ZipArchiveMode.Create);
-        foreach (var (filename, buffer) in data)
-        {
-            if (buffer is null || buffer.Length == 0)
-                continue;
-            var entry = zip.CreateEntry(filename, CompressionLevel.Fastest);
-            using var stream = entry.Open();
-            stream.Write(buffer);
-            stream.Flush();
-        }
-        ms.Flush();
-        zip.Dispose();
-        return ms.ToArray();
-    }
 
     public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
         var forwards = args.Event.Chain.GetMsg<ForwardEntity>();
-        if (forwards.FirstOrDefault() is not ForwardEntity forward || !Plugin.FileCache.TryGetValue(forward.MessageId, out var file))
+        if (forwards.FirstOrDefault() is not ForwardEntity forward || MessageRecord.Query(forward.MessageId)?.GetFile() is not FileEntity file)
         {
             await args.Event.Reply("未找到文件，请重新上传后反编译!", true);
             return;
@@ -68,7 +52,7 @@ public class DecompilerCommand : Command
         {
             var zipContents = decompiler.DecompiledFiles.Select(x => (x.Key, Encoding.UTF8.GetBytes(x.Value))).ToList();
             var zipFileName =  Path.GetFileNameWithoutExtension(file.FileName) + "(Source).zip";
-            var zipBuffer = GenerateCompressed(zipContents);
+            var zipBuffer = GreaterUtils.GenerateCompressed(zipContents);
             await args.Bot.GroupFSUpload(args.GroupUin, new FileEntity(zipBuffer, zipFileName));
         }
         else
@@ -109,7 +93,7 @@ public class DecompilerCommand : Command
         string normalizedCode = rawCode.Replace("\t", new string(' ', spacesPerIndent));
 
         // Step 2: 分割代码行
-        string[] lines = normalizedCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        string[] lines = normalizedCode.Split(["\r\n", "\r", "\n"], StringSplitOptions.None);
 
         // Step 4: 处理每一行
         foreach (string line in lines)

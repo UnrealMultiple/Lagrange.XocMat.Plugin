@@ -2,6 +2,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
+using Lagrange.XocMat.Utility;
 using Music.QQ;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -244,7 +245,7 @@ public class Music_163
             }
         });
         var taskres = await Task.WhenAll(tasks);
-        return Utils.GenerateCompressed(taskres.ToList());
+        return GreaterUtils.GenerateCompressed(taskres.ToList());
     }
 
     /// <summary>

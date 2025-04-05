@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Lagrange.XocMat.Extensions;
+using Lagrange.XocMat.Utility;
 using Music.QQ.Enums;
 using Music.QQ.Internal;
 using Music.QQ.Internal.MusicToken;
@@ -211,7 +212,7 @@ public class Music_QQ : IDisposable
             }
         });
         var taskres = await Task.WhenAll(tasks);
-        return Utils.GenerateCompressed(taskres.ToList());
+        return GreaterUtils.GenerateCompressed(taskres.ToList());
     }
 
     public async Task<PlayData> GetDetail(long id, int dirid = 0)

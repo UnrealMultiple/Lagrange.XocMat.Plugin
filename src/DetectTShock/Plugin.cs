@@ -21,10 +21,8 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     public override string Author => "少司命";
 
     public override Version Version => new(1, 0, 0, 0);
-
-    public readonly static CircularDictionary<ulong, FileEntity> FileCache = new(100);
     
-    public readonly static HashSet<string> compressedFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    public readonly static HashSet<string> compressedFileExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".zip", ".rar", ".7z", 
        ".tar.gz", ".tar.bz2", ".tar.xz",
@@ -52,9 +50,9 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 
     public void DeleteFiles(string dir, List<(string name, byte[] buffer)> files)
     {
-        foreach(var file in files)
+        foreach (var (name, _) in files)
         {
-            var path = Path.Combine(dir, file.name);
+            var path = Path.Combine(dir, name);
             if (File.Exists(path))
             {
                 File.Delete(path);
@@ -66,7 +64,6 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     {
         var file = e.Chain.GetFile();
         if (file == null) return;
-        FileCache.Add(e.Chain.MessageId, file);
         if (!compressedFileExtensions.Contains(Path.GetExtension(file.FileName))) return;
 
         var dirInfo = new DirectoryInfo(Config.Instance.DetectPath);
