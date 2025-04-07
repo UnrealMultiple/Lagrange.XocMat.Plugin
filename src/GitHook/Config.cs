@@ -1,6 +1,7 @@
 ﻿using Lagrange.XocMat.Attributes;
 using Lagrange.XocMat.Configuration;
 using Newtonsoft.Json;
+using Octokit.Webhooks;
 
 namespace GitHook;
 
@@ -20,5 +21,23 @@ public class Config : JsonConfigBase<Config>
     public string Token { get; set; } = string.Empty;
 
     [JsonProperty("通知群")]
-    public uint[] Groups { get; set; } = Array.Empty<uint>();
+    public Dictionary<string, RepoNotice> Notices { get; set; } = [];
+
+    protected override void SetDefault()
+    {
+        Notices["Owner/Repo"] = new RepoNotice
+        {
+            Groups = [123456789],
+            Features = [WebhookEventType.Star, WebhookEventType.PullRequest, WebhookEventType.Issues]
+        };
+    }
+}
+
+public class RepoNotice
+{
+    [JsonProperty("通知群")]
+    public uint[] Groups { get; set; } = [];
+
+    [JsonProperty("功能")]
+    public string[] Features { get; set; } = [];
 }

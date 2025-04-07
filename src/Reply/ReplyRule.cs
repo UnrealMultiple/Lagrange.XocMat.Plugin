@@ -55,17 +55,8 @@ public partial class ReplyAdapter
         var message = chain.GetText().Trim();
         foreach (var rule in _rules)
         {
-            Logger($"测试规则: {rule.MatchPattern}");
-            
             var match = rule.TriggerRegex.Match(message);
             if (!match.Success) continue;
-
-            Logger($"匹配成功，分组数: {match.Groups.Count}");
-            for (int i = 0; i < match.Groups.Count; i++)
-            {
-                Logger($"Group[{i}]: {match.Groups[i].Value}");
-            }
-
             var processed = await ProcessTemplateAsync(match, rule.ReplyTemplate, chain);
             return await BuildResponseAsync(processed, chain);
         }
@@ -86,12 +77,9 @@ public partial class ReplyAdapter
             
             if (index <= 0 || index >= match.Groups.Count)
             {
-                Logger($"无效分组索引: ${index}");
                 return m.Value;
             }
-            
             var value = match.Groups[index].Value;
-            Logger($"替换分组: ${index} → {value}");
             return value;
         });
     }
@@ -115,7 +103,6 @@ public partial class ReplyAdapter
                 }
                 catch (Exception ex)
                 {
-                    Logger($"处理变量失败: {varName} - {ex.Message}");
                     replacements[m.Value] = $"[{varName}错误]";
                 }
             }

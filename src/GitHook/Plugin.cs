@@ -14,11 +14,22 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 
     public override Version Version => new(1, 0, 0, 1);
 
-    protected override void Initialize()
+    private readonly HttpServer _httpServer = new();
+
+    protected override async void Initialize()
     {
+        _httpServer.Logger += OnServerLog;
+        await _httpServer.Start();
     }
+
+    private void OnServerLog(string log, LogLevel level) => Logger.Log(level, log);
 
     protected override void Dispose(bool dispose)
     {
+        if (dispose)
+        {
+            _httpServer.Logger -= OnServerLog;
+            _httpServer.Dispose();
+        }
     }
 }
