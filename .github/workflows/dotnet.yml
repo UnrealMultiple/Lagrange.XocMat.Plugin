@@ -13,7 +13,7 @@ jobs:
         with:
            submodules: 'recursive'
            fetch-depth: 0
-           ssh-key: ${{ secrets.DEPLOY_KEY }}
+           token: ${{ secrets.MUSIC_TOKEN }}
            
       - name: 初始化.NET 9
         uses: actions/setup-dotnet@v4
