@@ -18,8 +18,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disorder", "src\Disorder\Di
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHook", "src\GitHook\GitHook.csproj", "{15E94CAB-1A97-4185-8619-029BF0003A46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Music", "src\Music\Music.csproj", "{E8BCCF13-46E4-4C54-B473-C37C880FEE76}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineReward", "src\OnlineReward\OnlineReward.csproj", "{F166680F-C527-4C3A-A5D0-6CBE5FA10319}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginManager", "src\PluginManager\PluginManager.csproj", "{711B5042-E0A1-476B-8CEE-84A806E05236}"
@@ -60,10 +58,6 @@ Global
 		{15E94CAB-1A97-4185-8619-029BF0003A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15E94CAB-1A97-4185-8619-029BF0003A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15E94CAB-1A97-4185-8619-029BF0003A46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8BCCF13-46E4-4C54-B473-C37C880FEE76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8BCCF13-46E4-4C54-B473-C37C880FEE76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8BCCF13-46E4-4C54-B473-C37C880FEE76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8BCCF13-46E4-4C54-B473-C37C880FEE76}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F166680F-C527-4C3A-A5D0-6CBE5FA10319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F166680F-C527-4C3A-A5D0-6CBE5FA10319}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F166680F-C527-4C3A-A5D0-6CBE5FA10319}.Release|Any CPU.ActiveCfg = Release|Any CPU
