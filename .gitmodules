@@ -1,0 +1,3 @@
+[submodule "src/Music"]
+	path = src/Music
+	url = https://github.com/Controllerdestiny/Music.git
