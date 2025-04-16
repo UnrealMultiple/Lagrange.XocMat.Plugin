@@ -63,6 +63,8 @@ public class WebHook : WebhookEventProcessor
                 DateTime.Now.Date);
             if (_operations.Contains(record))
                 return;
+            else
+                _operations.Add(record);
             var msg = $"用户 {starEvent.Sender?.Login} {CultureInfo.InvariantCulture.TextInfo.ToTitleCase(action)} Start 仓库 {starEvent.Repository?.FullName} 共计({starEvent.Repository?.StargazersCount})个Star";
             await SendGroupMsg(new TextEntity(msg), groups);
         } 
