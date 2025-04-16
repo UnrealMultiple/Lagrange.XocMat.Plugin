@@ -12,8 +12,10 @@ using Octokit.Webhooks.Events.Star;
 
 namespace GitHook;
 
+public record StartOperationRecords(string Repo, string User, string Operation, DateTime Time);
 public class WebHook : WebhookEventProcessor
 {
+    private HashSet<StartOperationRecords> _operations = [];
     private static bool VerifyRepoFeature(WebhookEvent e, WebhookHeaders headers, out uint[] groups)
     {
         if(Config.Instance.Notices.TryGetValue(e.Repository?.FullName ?? "", out var notice))
@@ -54,7 +56,13 @@ public class WebHook : WebhookEventProcessor
     protected override async Task ProcessStarWebhookAsync(WebhookHeaders headers, StarEvent starEvent, StarAction action)
     {
         if (VerifyRepoFeature(starEvent, headers, out var groups))
-        { 
+        {
+            var record = new StartOperationRecords(starEvent.Repository?.FullName ?? "empty",
+                starEvent.Sender?.Login ?? "empty",
+                CultureInfo.InvariantCulture.TextInfo.ToTitleCase(action),
+                DateTime.Now.Date);
+            if (_operations.Contains(record))
+                return;
             var msg = $"用户 {starEvent.Sender?.Login} {CultureInfo.InvariantCulture.TextInfo.ToTitleCase(action)} Start 仓库 {starEvent.Repository?.FullName} 共计({starEvent.Repository?.StargazersCount})个Star";
             await SendGroupMsg(new TextEntity(msg), groups);
         } 
