@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
            submodules: 'recursive'
+           fetch-depth: 0
+           token: ${{ secrets.MUSIC_TOKEN }}
            
       - name: 初始化.NET 9
         uses: actions/setup-dotnet@v4
