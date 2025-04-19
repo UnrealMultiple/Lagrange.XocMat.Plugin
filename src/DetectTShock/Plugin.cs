@@ -1,10 +1,7 @@
-﻿using System.Text;
-using Lagrange.Core;
-using Lagrange.Core.Common.Interface.Api;
+﻿using Lagrange.Core;
 using Lagrange.Core.Event.EventArg;
 using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
-using Lagrange.XocMat;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Plugin;
 using Lagrange.XocMat.Utility;
@@ -29,6 +26,8 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
        ".gz", ".bz2", ".xz"
     };
 
+    private bool _isRunning = false;
+
     protected override void Dispose(bool dispose)
     {
         throw new NotImplementedException();
@@ -43,25 +42,31 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
     {
         await Task.WhenAll(files.Select(async file =>
         {
+            if(file.name.Equals("tshock.dll", StringComparison.CurrentCultureIgnoreCase))
+                return;
             var path = Path.Combine(dir, file.name);
             await File.WriteAllBytesAsync(path, file.buffer);
         }));
     }
 
-    public void DeleteFiles(string dir, List<(string name, byte[] buffer)> files)
+    public void DeleteFiles(string dir)
     {
-        foreach (var (name, _) in files)
+        if(!Directory.Exists(dir)) return;
+        foreach(var file in Directory.GetFiles(dir))
         {
-            var path = Path.Combine(dir, name);
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
-        }   
+            if (Path.GetFileNameWithoutExtension(file).Equals("tshock", StringComparison.CurrentCultureIgnoreCase))
+                continue;
+            File.Delete(file);
+        }
     }
 
     private void OnGroupMessageReceived(BotContext context, GroupMessageEvent e)
     {
+        if (_isRunning)
+        {
+            e.Reply("当前有个任务正在运行!请等待结束后重试!");
+            return;
+        }
         var file = e.Chain.GetFile();
         if (file == null) return;
         if (!compressedFileExtensions.Contains(Path.GetExtension(file.FileName))) return;
@@ -77,6 +82,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
             {
                 try
                 {
+                    _isRunning = true;
                     var buffer = await HttpUtils.GetByteAsync(file.FileUrl);
                     var files = SecureDllExtractor.ExtractDllFiles(buffer);
                     if (files.Count == 0)
@@ -88,11 +94,16 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
                     {
                         await WriteFiles(Path.Combine(dir.FullName, "ServerPlugins"), files);
                         var result = ProcessUtils.StartProcess(Path.Combine(dir.FullName, Config.Instance.DetectProgram));
-                        DeleteFiles(Path.Combine(dir.FullName, "ServerPlugins"), files);
+                        DeleteFiles(Path.Combine(dir.FullName, "ServerPlugins"));
+                        var segments = result.StandardOutput.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+                        var markdownContents = segments.Split(100).Select(segment =>
+                        {
+                            return MessageBuilder.Friend(e.Chain.GroupMemberInfo!.Uin)
+                                .Text(dir.Name)
+                                .Markdown(new MarkdownData() { Content = $"```\n{segment.JoinToString("\n")}\n```" });
+                        }); 
                         return MessageBuilder.Friend(e.Chain.GroupMemberInfo!.Uin)
-                            .MultiMsg([MessageBuilder.Friend(e.Chain.GroupMemberInfo!.Uin)
-                                    .Text(dir.Name)
-                                    .Markdown(new MarkdownData(){ Content = $"```\n{result.StandardOutput}\n```" })]);
+                            .MultiMsg([..markdownContents]);
                     });
                     var mul = await Task.WhenAll(tasks);
                     await e.Reply(msg.MultiMsg([..mul]));
@@ -101,6 +112,10 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
                 {
                     logger.LogError(ex, "Error occurred while processing file");
 
+                }
+                finally
+                {
+                    _isRunning = false;
                 }
             }
     });
