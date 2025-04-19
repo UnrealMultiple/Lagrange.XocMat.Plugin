@@ -38,23 +38,23 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
         BotContext.Invoker.OnGroupMessageReceived += OnGroupMessageReceived;
     }
 
-    public async Task WriteFiles(string dir, List<(string name, byte[] buffer)> files)
+    public static async Task WriteFiles(string dir, List<(string name, byte[] buffer)> files)
     {
         await Task.WhenAll(files.Select(async file =>
         {
-            if(file.name.Equals("tshock.dll", StringComparison.CurrentCultureIgnoreCase))
+            if(Path.GetFileNameWithoutExtension(file.name).Equals("tshockapi", StringComparison.CurrentCultureIgnoreCase))
                 return;
             var path = Path.Combine(dir, file.name);
             await File.WriteAllBytesAsync(path, file.buffer);
         }));
     }
 
-    public void DeleteFiles(string dir)
+    public static void DeleteFiles(string dir)
     {
         if(!Directory.Exists(dir)) return;
         foreach(var file in Directory.GetFiles(dir))
         {
-            if (Path.GetFileNameWithoutExtension(file).Equals("tshock", StringComparison.CurrentCultureIgnoreCase))
+            if (Path.GetFileNameWithoutExtension(file).Equals("tshockapi", StringComparison.CurrentCultureIgnoreCase))
                 continue;
             File.Delete(file);
         }

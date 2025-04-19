@@ -11,11 +11,11 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
 namespace DetectTShock;
-
+#nullable disable
 public class DllDecompiler : IDisposable
 {
     #region 公共属性
-    public Dictionary<string, string> DecompiledFiles { get; } = new();
+    public Dictionary<string, string> DecompiledFiles { get; } = [];
     public Exception LastError { get; private set; }
     #endregion
 
@@ -23,7 +23,7 @@ public class DllDecompiler : IDisposable
     private PEFile _peFile;
     private CSharpDecompiler _decompiler;
     private UniversalAssemblyResolver _resolver;
-    private readonly HashSet<string> _processedTypes = new();
+    private readonly HashSet<string> _processedTypes = [];
     #endregion
 
     #region 加载方法
