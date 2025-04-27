@@ -31,7 +31,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
                     try
                     {
 
-                        var res = Config.Instance.UseContext ? await Utils.Instance.ChatContent(e.Chain.GroupMemberInfo!.Uin, text) : await Utils.Instance.Chatt(text);
+                        var res = Config.Instance.UseContext ? await Utils.Instance.ChatContent(e.Chain.GroupMemberInfo!.Uin, text) : await Utils.Instance.Chat(text);
                         var builder = MessageBuilder.Group(e.Chain.GroupUin!.Value)
                             .MultiMsg(MessageBuilder.Friend(e.Chain.GroupMemberInfo!.Uin).MultiMsg(MessageBuilder.Friend(e.Chain.GroupMemberInfo!.Uin).Markdown(new MarkdownData() { Content = res })));
                         await e.Reply(builder);

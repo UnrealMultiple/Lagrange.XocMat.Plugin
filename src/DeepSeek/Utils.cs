@@ -15,11 +15,11 @@ internal class Utils
     {
         var request = GetChatRequest(userId);
         request.Messages.Add(Message.NewUserMessage(query));
-        var chatResponse = await _client.ChatAsync(request, new CancellationToken());
+        var chatResponse = await _client.ChatAsync(request, CancellationToken.None);
         return chatResponse?.Choices.First().Message?.Content ?? throw new Exception($"No response from DeepSeek {_client.ErrorMsg}");
     }
 
-    public async Task<string> Chatt(string query)
+    public async Task<string> Chat(string query)
     {
         var request = new ChatRequest
         {
@@ -28,9 +28,9 @@ internal class Utils
                Message.NewUserMessage(query)
             ],
             // Specify the model
-            Model = DeepSeekModels.ChatModel
+            Model = Config.Instance.Model
         };
-        var chatResponse = await _client.ChatAsync(request, new CancellationToken());
+        var chatResponse = await _client.ChatAsync(request, CancellationToken.None);
         return chatResponse?.Choices.First().Message?.Content ?? throw new Exception($"No response from DeepSeek {_client.ErrorMsg}");
     }
 
@@ -41,9 +41,9 @@ internal class Utils
 
     private ChatRequest GetChatRequest(ulong userId)
     {
-        if (MemberChats.ContainsKey(userId))
+        if (MemberChats.TryGetValue(userId, out ChatRequest? value))
         {
-            return MemberChats[userId];
+            return value;
         }
         var request = new ChatRequest
         {
@@ -51,7 +51,7 @@ internal class Utils
                 Message.NewSystemMessage(Config.Instance.SystemMessage),
             ],
             // Specify the model
-            Model = DeepSeekModels.ChatModel
+            Model = Config.Instance.Model
         };
         MemberChats[userId] = request;
         return request;
