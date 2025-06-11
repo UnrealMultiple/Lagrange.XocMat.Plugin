@@ -17,7 +17,7 @@ public class DrawCommand : Command
 
     public override string[] Permissions => ["onebot.draw.image"];
 
-    private const string Url = "";
+    private const string Url = "https://oiapi.net/api/AiDrawImage";
 
     public override async Task InvokeAsync(GroupCommandArgs args, ILogger log)
     {
