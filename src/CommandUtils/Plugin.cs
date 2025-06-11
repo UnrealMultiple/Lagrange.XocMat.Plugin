@@ -7,6 +7,14 @@ namespace CommandUtils;
 
 public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 {
+    public override string Name => "CommandUtils";
+
+    public override string Description => "提供命令扩展程序";
+
+    public override string Author => "少司命";
+
+    public override Version Version => new(1, 0, 0, 0);
+
     protected override void Initialize()
     {
         Lagrange.XocMat.Event.OperatHandler.OnGroupCommand += OnCommand;

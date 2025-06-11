@@ -9,6 +9,14 @@ namespace DeepSeek;
 
 public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
 {
+    public override string Name => "DeepSeek";
+
+    public override string Description => "AI对话插件";
+
+    public override string Author => "少司命";
+
+    public override Version Version => new(1, 0, 0, 0);
+
     protected override void Initialize()
     {
         BotContext.Invoker.OnGroupMessageReceived += Invoker_OnGroupMessageReceived;

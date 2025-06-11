@@ -21,7 +21,7 @@ public delegate Task ContentTypeHandler(string type, string content, MessageChai
 
 public partial class ReplyAdapter
 {
-    private static List<ReplyRule> _rules => Config.Instance.Rules;
+    private static List<ReplyRule> Rules => Config.Instance.Rules;
     private static readonly Dictionary<string, AsyncVariableHandler> _asyncHandlers = [];
     private static readonly Dictionary<string, ContentTypeHandler> _contentHandlers = [];
     
@@ -53,7 +53,7 @@ public partial class ReplyAdapter
     public static async Task<MessageBuilder?> ProcessMessageAsync(MessageChain chain)
     {
         var message = chain.GetText().Trim();
-        foreach (var rule in _rules)
+        foreach (var rule in Rules)
         {
             var match = rule.TriggerRegex.Match(message);
             if (!match.Success) continue;

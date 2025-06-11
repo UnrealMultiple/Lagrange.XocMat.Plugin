@@ -15,6 +15,15 @@ public class Config : JsonConfigBase<Config>
     [JsonProperty("Cosplay撤回时间")]
     public int CosplayRecallTime { get; set; } = 20;
 
+    [JsonProperty("自动同意加群申请")]
+    public bool AllowGroupJoinRequest { get; set; } = true;
+
+    [JsonProperty("处理加群等级阈值")]
+    public int Level { get; set; } = 15;
+
+    [JsonProperty("自动同意加群邀请")]
+    public bool AllowGroupInvitation { get; set; } = true;
+
     [JsonProperty("道侣数据")]
     public Dictionary<long, FollowContent> TempSave { get; set; } = [];
 
