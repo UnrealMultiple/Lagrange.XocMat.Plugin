@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Music", "src\Music\Music.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIDrawImage", "src\AIDrawImage\AIDrawImage.csproj", "{C48BB597-D6CC-4B3B-ABEA-307F3BCE1803}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatGlm", "src\ChatGlm\ChatGlm.csproj", "{7EF79F26-D9E6-42E9-A1F8-B12260001344}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,10 @@ Global
 		{C48BB597-D6CC-4B3B-ABEA-307F3BCE1803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C48BB597-D6CC-4B3B-ABEA-307F3BCE1803}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C48BB597-D6CC-4B3B-ABEA-307F3BCE1803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EF79F26-D9E6-42E9-A1F8-B12260001344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EF79F26-D9E6-42E9-A1F8-B12260001344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EF79F26-D9E6-42E9-A1F8-B12260001344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EF79F26-D9E6-42E9-A1F8-B12260001344}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
