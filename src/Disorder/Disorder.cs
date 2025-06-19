@@ -1,13 +1,8 @@
 ﻿using Lagrange.Core;
 using Lagrange.Core.Common.Entity;
 using Lagrange.Core.Common.Interface.Api;
-using Lagrange.Core.Internal.Context;
-using Lagrange.Core.Internal.Context.Logic.Implementation;
-using Lagrange.Core.Utility.Extension;
 using Lagrange.XocMat.Plugin;
 using Microsoft.Extensions.Logging;
-using ProtoBuf.Meta;
-using System.Reflection;
 
 namespace Disorder;
 
@@ -36,20 +31,10 @@ public class Disorder(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot
         {
             return;
         }
-        var flag = BindingFlags.NonPublic | BindingFlags.Instance;
-        if (typeof(BotContext)
-            .GetField("ContextCollection", flag)
-            ?.GetValue(context) is ContextCollection ContextCollection)
+        var requests = await BotContext.FetchGroupRequests();
+        if (requests?.FirstOrDefault(x => e.GroupUin == x.GroupUin && e.TargetUin == x.TargetMemberUin) is { } request)
         {
-            if (typeof(BusinessContext).GetProperty("OperationLogic", flag)?.GetValue(ContextCollection.Business) is OperationLogic logic)
-            {
-                var requests = await bot.FetchGroupRequests();
-                if (requests?.FirstOrDefault(x => e.GroupUin == x.GroupUin && e.TargetUin == x.TargetMemberUin) is { } request)
-                {
-                    var sequence = (ulong)request.GetType().GetProperty("Sequence", flag)!.GetValue(request)!;
-                    await logic.SetGroupRequest(e.GroupUin, sequence, (uint)request.EventType, GroupRequestOperate.Allow, "");
-                }
-            }
+            await BotContext.ContextCollection.Business.OperationLogic.SetGroupRequest(e.GroupUin, request.Sequence, (uint)request.EventType, GroupRequestOperate.Allow, "");
         }
     }
 
@@ -57,31 +42,23 @@ public class Disorder(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot
     {
         if (!Config.Instance.AllowGroupJoinRequest)
             return;
-        var flag = BindingFlags.NonPublic | BindingFlags.Instance;
-        if (typeof(BotContext)
-            .GetField("ContextCollection", flag)
-            ?.GetValue(context) is ContextCollection ContextCollection)
-        {
-            if (typeof(BusinessContext).GetProperty("OperationLogic", flag)?.GetValue(ContextCollection.Business) is OperationLogic logic)
-            {
-                var sequence = e.Sequence;
-                if (sequence == null)
-                { 
-                    var requests = await context.FetchGroupRequests();
-                    if (requests == null) return;
 
-                    var request = requests.FirstOrDefault(r =>
-                    {
-                        return r.EventType == BotGroupRequest.Type.SelfInvitation
-                            && r.GroupUin ==e.GroupUin
-                            && r.InvitorMemberUin == e.InvitorUin;
-                    });
-                    if (request == null) return;
-                    sequence = (ulong)request.GetType().GetProperty("Sequence", flag)!.GetValue(request)!;
-                }
-                await logic.SetGroupRequest(e.GroupUin, sequence!.Value, 2, GroupRequestOperate.Allow, "");
-            }
+        var sequence = e.Sequence;
+        if (sequence == null)
+        { 
+            var requests = await context.FetchGroupRequests();
+            if (requests == null) return;
+
+            var request = requests.FirstOrDefault(r =>
+            {
+                return r.EventType == BotGroupRequest.Type.SelfInvitation
+                    && r.GroupUin ==e.GroupUin
+                    && r.InvitorMemberUin == e.InvitorUin;
+            });
+            if (request == null) return;
+            sequence = request.Sequence;
         }
+        await BotContext.ContextCollection.Business.OperationLogic.SetGroupRequest(e.GroupUin, sequence.Value, 2, GroupRequestOperate.Allow, "");
     }
 
     protected override void Dispose(bool dispose)
