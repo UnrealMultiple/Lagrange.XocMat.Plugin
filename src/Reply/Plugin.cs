@@ -74,7 +74,7 @@ public class Plugin(ILogger logger, BotContext bot) : XocMatPlugin(logger, bot)
         });
         ReplyAdapter.RegisterContentHandler("forward", (type, content, chain, builder) =>
         {
-            builder.Add(new ForwardEntity(chain);
+            builder.Add(new ForwardEntity(chain));
             return Task.CompletedTask;
         });
         ReplyAdapter.RegisterContentHandler("select", (type, content, chain, builder) =>
