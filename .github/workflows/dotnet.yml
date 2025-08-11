@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     name: 构建插件
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
            submodules: 'recursive'
            fetch-depth: 0
@@ -47,7 +47,7 @@ jobs:
     permissions:
          contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           
