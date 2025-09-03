@@ -16,7 +16,7 @@ jobs:
            token: ${{ secrets.MUSIC_TOKEN }}
            
       - name: 初始化.NET 9
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         env:
           DOTNET_CLI_UI_LANGUAGE: zh-CN
         with:
