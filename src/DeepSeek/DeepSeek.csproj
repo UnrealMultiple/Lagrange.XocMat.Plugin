@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\..\template.targets" />
 	<ItemGroup>
-	  <PackageReference Include="Ater.DeepSeek.Core" Version="1.1.5" />
+	  <PackageReference Include="Ater.DeepSeek.Core" Version="1.2.0" />
 	</ItemGroup>
 	<PropertyGroup>
 		<PackNames>DeepSeek.Core.dll</PackNames>
