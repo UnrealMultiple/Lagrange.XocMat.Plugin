@@ -1,14 +1,15 @@
-﻿using System.Globalization;
-using Lagrange.Core.Message;
+﻿using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
 using Lagrange.XocMat;
 using Lagrange.XocMat.Extensions;
 using Lagrange.XocMat.Utility.Images;
+using Octokit;
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.Issues;
 using Octokit.Webhooks.Events.PullRequest;
 using Octokit.Webhooks.Events.Star;
+using System.Globalization;
 
 namespace GitHook;
 
@@ -35,10 +36,10 @@ public class WebHook : WebhookEventProcessor
         await Task.WhenAll(tasks);
     }
 
-    protected override async Task ProcessIssuesWebhookAsync(WebhookHeaders headers, IssuesEvent issuesEvent, IssuesAction action)
+    protected override async ValueTask ProcessIssuesWebhookAsync(WebhookHeaders headers, IssuesEvent issuesEvent, IssuesAction action, CancellationToken cancellationToken = default)
     {
         if (action.Equals(IssuesAction.Opened) && VerifyRepoFeature(issuesEvent, headers, out var groups))
-        { 
+        {
             var title = issuesEvent.Issue.Title;
             var userName = issuesEvent.Issue.User.Login;
             var repName = issuesEvent.Repository?.FullName;
@@ -53,7 +54,7 @@ public class WebHook : WebhookEventProcessor
         }
     }
 
-    protected override async Task ProcessStarWebhookAsync(WebhookHeaders headers, StarEvent starEvent, StarAction action)
+    protected override async ValueTask ProcessStarWebhookAsync(WebhookHeaders headers, StarEvent starEvent, StarAction action, CancellationToken cancellationToken = default)
     {
         if (VerifyRepoFeature(starEvent, headers, out var groups))
         {
@@ -67,10 +68,10 @@ public class WebHook : WebhookEventProcessor
                 _operations.Add(record);
             var msg = $"用户 {starEvent.Sender?.Login} {CultureInfo.InvariantCulture.TextInfo.ToTitleCase(action)} Start 仓库 {starEvent.Repository?.FullName} 共计({starEvent.Repository?.StargazersCount})个Star";
             await SendGroupMsg(new TextEntity(msg), groups);
-        } 
+        }
     }
 
-    protected override async Task ProcessPullRequestWebhookAsync(WebhookHeaders headers, PullRequestEvent pullRequestEvent, PullRequestAction action)
+    protected override async ValueTask ProcessPullRequestWebhookAsync(WebhookHeaders headers, PullRequestEvent pullRequestEvent, PullRequestAction action, CancellationToken cancellationToken = default)
     {
         if (action == PullRequestAction.Opened && VerifyRepoFeature(pullRequestEvent, headers, out var groups))
         {
@@ -87,4 +88,5 @@ public class WebHook : WebhookEventProcessor
             await SendGroupMsg(new ImageEntity(tableBuider.Builder()), groups);
         }
     }
+    
 }
