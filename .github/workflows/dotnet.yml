@@ -35,7 +35,7 @@ jobs:
           find . -type d -exec zip -r "../Plugins.zip" {} \;
       
       - name: 上传临时插件包
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Plugins
           path: Plugins.zip
