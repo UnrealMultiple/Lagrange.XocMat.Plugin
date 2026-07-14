@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\..\template.targets" />
 	<ItemGroup>
-	  <PackageReference Include="ICSharpCode.Decompiler" Version="9.0.0.7889" />
+	  <PackageReference Include="ICSharpCode.Decompiler" Version="10.1.1.8388" />
 	  <PackageReference Include="SharpCompress" Version="0.40.0" />
 	</ItemGroup>
 	<PropertyGroup>
